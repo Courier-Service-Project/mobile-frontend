@@ -6,13 +6,14 @@ import ForgotPasswordScreen3 from '../../custom_modules/screens/ForgotPassword/f
 import ForgotPasswordScreen1 from '../../custom_modules/screens/ForgotPassword/forgotPasswordScreen1';
 import ForgotPasswordScreen2 from '../../custom_modules/screens/ForgotPassword/forgotPasswordScreen2';
 import BottomTabNavigator from '../BottomTabNavigation/bottomTabNavigation';
+import AppHeader from '../../custom_modules/components/appHeader';
 
 const stack = createNativeStackNavigator();
 const StackNavigation = () => {
   return (
     <stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="BottomTabNavigator">
+      initialRouteName="Login">
       <stack.Screen name="Login" component={Login}></stack.Screen>
       <stack.Screen
         name="ResetPassword"
@@ -28,7 +29,8 @@ const StackNavigation = () => {
         component={ForgotPasswordScreen3}></stack.Screen>
       <stack.Screen
         name="BottomTabNavigator"
-        component={BottomTabNavigator}></stack.Screen>
+        component={BottomTabNavigator}
+        options={{header: () => <AppHeader />}}></stack.Screen>
     </stack.Navigator>
   );
 };
