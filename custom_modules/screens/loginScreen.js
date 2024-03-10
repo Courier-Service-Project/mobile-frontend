@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import AppHeader from '../components/appHeader';
 import logInImage from '../icons/logImage.png';
 import textInputs from '../styles/textInputStyles';
 import axios from 'axios';
@@ -18,8 +17,8 @@ import {useNavigation} from '@react-navigation/native';
 import {NameInput, PasswordInput} from '../components/textInput';
 import modalStyle from '../styles/modals';
 import check from '../icons/check.png';
-import { ResultModal } from '../components/modals/resultModal';
-
+import {ResultModal} from '../components/modals/resultModal';
+import {AppHeader} from '../components/appHeader';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -35,36 +34,46 @@ const Login = () => {
 
   const nextNavigation = () => {
     setShowModal(false);
-    navigation.navigate('Login');
+    navigation.navigate('BottomTabNavigator', {
+      screen: 'HomeSreen',
+    });
   };
 
-  const sendData = () => {
+  const sendData = async () => {
     userdata = {
       name,
       password,
     };
-    axios
-      .post('http://10.10.13.237:9000/api/mobile/users/login', userdata)
-      .then(res => {
-        const {success, token, message} = res.data;
-        console.log(message[0].name);
-        if (success == 200) {
-          AsyncStorage.setItem('token', token);
-          AsyncStorage.setItem('userName', message[0].name);
-          setPassword('');
-          setName('');
-          {
-            message[0].newUser == 'F'
-              ? navigation.navigate('ResetPassword')
-              : setShowModal(true);
-          }
-        } else if (success == 101) {
-          setResultModal(true);
-          setModalMessage('Invalid Credentials!');
-          setName('');
-          setPassword('');
+
+    try {
+      const result = await axios.post(
+        'http://10.10.13.237:9000/api/mobile/users/login',
+        userdata,
+      );
+      const {success, token, message} = result.data;
+      if (success == 200) {
+        AsyncStorage.setItem('token', token);
+        AsyncStorage.setItem('userName', message[0].FirstName);
+        AsyncStorage.setItem('branchLocation', message[0].branchLocation);
+        AsyncStorage.setItem('user_id', message[0].BranchUser_id + '');
+        setPassword('');
+        setName('');
+        {
+          message[0].NewUser == 'T'
+            ? navigation.navigate('ResetPassword')
+            : setShowModal(true);
         }
-      });
+      } else if (success == 101) {
+        setResultModal(true);
+        setModalMessage('Invalid Credentials!');
+        setName('');
+        setPassword('');
+      }
+    } catch (error) {
+      console.log(error.message);
+      setModalMessage(error.message);
+      setResultModal(true);
+    }
   };
 
   const loginUser = () => {
@@ -146,8 +155,6 @@ const Login = () => {
     </View>
   );
 };
-
-
 
 const style = StyleSheet.create({
   loginContainer: {

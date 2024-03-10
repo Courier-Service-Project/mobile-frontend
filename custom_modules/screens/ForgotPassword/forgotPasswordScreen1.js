@@ -63,7 +63,6 @@ const ForgotPasswordScreen1 = () => {
     AsyncStorage.setItem('otp', results.data.message);
     AsyncStorage.setItem('userName', name);
     AsyncStorage.setItem('email', email);
-    console.log(results.data.message);
     setSuccessModal(true);
     setModalMessage('Email is sent Successfully');
     setShow(false);

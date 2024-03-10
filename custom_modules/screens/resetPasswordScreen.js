@@ -11,8 +11,7 @@ import validatePaasword from '../modules/Validations/passwordValidation';
 import {PasswordInput} from '../components/textInput';
 import BackendProcessButton from '../components/buttons';
 import FullScreenModal from '../components/modals/fullScreenModal';
-import { ResultModal } from '../components/modals/resultModal';
-
+import {ResultModal} from '../components/modals/resultModal';
 
 const ResetPassword = () => {
   const navigation = useNavigation();
@@ -54,6 +53,7 @@ const ResetPassword = () => {
       }
     } catch (error) {
       setModalMessage(error.message);
+      setResultModal(true);
     }
   };
 
