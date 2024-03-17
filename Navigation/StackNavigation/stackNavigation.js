@@ -13,7 +13,7 @@ const StackNavigation = () => {
   return (
     <stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="Login">
+      initialRouteName="BottomTabNavigator">
       <stack.Screen name="Login" component={Login}></stack.Screen>
       <stack.Screen
         name="ResetPassword"
