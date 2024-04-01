@@ -7,6 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import logInImage from '../icons/logImage.png';
 import textInputs from '../styles/textInputStyles';
@@ -21,6 +22,8 @@ import {ResultModal} from '../components/modals/resultModal';
 import {AppHeader} from '../components/appHeader';
 
 const Login = () => {
+  const window = useWindowDimensions();
+
   const navigation = useNavigation();
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -159,6 +162,8 @@ const Login = () => {
 const style = StyleSheet.create({
   loginContainer: {
     flex: 1,
+    width: window.width,
+    height: window.height,
   },
   bodyTop: {
     flex: 3,

@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ActitvityStyles from '../../styles/activityScreenStyles';
@@ -10,6 +16,7 @@ import {
 } from '../../components/modals/resultModal';
 
 const PendingScreen = () => {
+  const window = useWindowDimensions();
   const [pendingOrders, setPendingOrders] = useState([{}]);
   const [mergeSort, setMergeSort] = useState([]);
   const [orderProvince, setOrderProvince] = useState('');
@@ -27,9 +34,8 @@ const PendingScreen = () => {
     sortingList();
   }, [pendingOrders]);
 
-
   //in here it will only get the items with the same province
-  
+
   const AcceptOrder = items => {
     if (orderProvince === '') {
       setOrderProvince(items.DiliveryProvince);
@@ -89,7 +95,14 @@ const PendingScreen = () => {
   };
 
   return (
-    <View style={{flex: 1, marginBottom: 10, backgroundColor: '#ffffff'}}>
+    <View
+      style={{
+        flex: 1,
+        marginBottom: 10,
+        backgroundColor: '#ffffff',
+        width: window.width,
+        height: window.height,
+      }}>
       <ScrollView>
         <View>
           <View>

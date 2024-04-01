@@ -5,6 +5,7 @@ import {
   ScrollView,
   Text,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import AppHeaderBackArrow from '../../components/appHeaderBackArrow';
 import passwordResetStyles from '../../styles/passwordReset';
@@ -27,6 +28,7 @@ import {
 // so i have stored otp and username inside asynchronous storage
 
 const ForgotPasswordScreen1 = () => {
+  const window = useWindowDimensions();
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
@@ -98,7 +100,7 @@ const ForgotPasswordScreen1 = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, width: window.width,height:window.height}}>
       <View>
         <AppHeaderBackArrow prevScreen={'Login'} />
       </View>

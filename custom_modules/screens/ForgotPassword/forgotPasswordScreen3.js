@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import AppHeaderBackArrow from '../../components/appHeaderBackArrow';
 import passwordResetStyles from '../../styles/passwordReset';
@@ -21,6 +22,7 @@ import {ResultModal} from '../../components/modals/resultModal';
 import validatePaasword from '../../modules/Validations/passwordValidation';
 
 const ForgotPasswordScreen3 = () => {
+  const window = useWindowDimensions();
   const navigation = useNavigation();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -82,7 +84,7 @@ const ForgotPasswordScreen3 = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, width: window.width,height:window.height}}>
       <View>
         <AppHeaderBackArrow prevScreen={'ForgotPasswordScreen2'} />
       </View>
