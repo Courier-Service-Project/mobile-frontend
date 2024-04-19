@@ -20,6 +20,7 @@ import check from '../../icons/check.png';
 import {PasswordInput} from '../../components/textInput';
 import {ResultModal} from '../../components/modals/resultModal';
 import validatePaasword from '../../modules/Validations/passwordValidation';
+import passwordLock from '../../icons/passwordLock.png';
 
 const ForgotPasswordScreen3 = () => {
   const window = useWindowDimensions();
@@ -64,7 +65,7 @@ const ForgotPasswordScreen3 = () => {
           };
           try {
             const result = await axios.patch(
-              'http://10.10.13.237:9000/api/mobile/users/resetForgotPassword',
+              `http://192.168.245.137:9000/api/mobile/users/resetForgotPassword`,
               body,
             );
             if (result.data.success == 200) {
@@ -96,9 +97,11 @@ const ForgotPasswordScreen3 = () => {
       <ScrollView>
         <View style={passwordResetStyles.screenTop}>
           <Text style={passwordResetStyles.textTop}>Reset Password</Text>
-          {/* <View>
-            <Image source={passwordLock} />
-          </View> */}
+
+        <View style={{marginTop:30,alignItems:'center'}}>
+          <Image source={passwordLock}style={passwordResetStyles.topImageView} />
+        </View>
+        
           <View style={[passwordResetStyles.textSubTopicContainer]}>
             <Text style={passwordResetStyles.textSubTopic}>
               Enter New Password
@@ -143,7 +146,7 @@ const ForgotPasswordScreen3 = () => {
             </View>
           </View>
         </Modal>
-        <View style={[passwordResetStyles.screenMiddle, {marginTop: 100}]}>
+        <View style={[passwordResetStyles.screenMiddle, {marginTop: 50,marginBottom:50}]}>
           <View style={textInputs.textInputFeildContainer}>
             <TouchableOpacity onPress={() => setInputErrorMessage('')}>
               <View style={{flexDirection: 'column', flexWrap: 'wrap'}}>

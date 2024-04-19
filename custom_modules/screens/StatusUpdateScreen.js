@@ -6,24 +6,29 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import AppHeaderBackArrow from '../components/appHeaderBackArrow';
+import OrderHeaderBackArrow from '../components/OrderHeaderBackArrow';
 import {ScrollView} from 'react-native-virtualized-view';
 import OrderIdView from '../components/OrderDetails/OrderIdView';
 import StatusUpdateStyles from '../styles/StatusUpdateScreenStyles';
+import {useNavigation} from '@react-navigation/native';
+//import updateStatusImage from '../icons/statusImage.png';
 
-const StatusUpdateScreen = () => {
+const StatusUpdateScreen = ({route}) => {
   const window = useWindowDimensions();
   //for radio button selection
   const [selectedRadio, setSelectedRadio] = useState();
-  
+  const navigation = useNavigation();
+  const {order_id} = route.params;
+
   return (
     <View style={{width: window.width, height: window.height}}>
       <View>
-        <AppHeaderBackArrow />
+        <OrderHeaderBackArrow prevScreen={'OrderDetailsScreen'} order_id={order_id} />
       </View>
       <ScrollView>
+        <View st>
         <View>
-          <OrderIdView />
+          <OrderIdView order_id={order_id} />
         </View>
 
         <View style={{marginHorizontal: 25}}>
@@ -31,7 +36,6 @@ const StatusUpdateScreen = () => {
             <Text style={StatusUpdateStyles.statusText}>Order Status </Text>
 
             <View style={{marginTop: 25}}>
-                
               <TouchableOpacity
                 style={StatusUpdateStyles.statusItemView}
                 onPress={() => setSelectedRadio(1)}>
@@ -40,7 +44,6 @@ const StatusUpdateScreen = () => {
                 </View>
                 <View style={{marginHorizontal: 25}}>
                   <View style={StatusUpdateStyles.radio}>
-                 
                     {selectedRadio == 1 ? (
                       <View style={StatusUpdateStyles.radioInsideView}></View>
                     ) : null}
@@ -95,8 +98,11 @@ const StatusUpdateScreen = () => {
             </View>
           </View>
         </View>
-
-        <View style={StatusUpdateStyles.imageView}></View>
+{/* 
+        <View style={StatusUpdateStyles.bottomImageView}>
+          <Image source={updateStatusImage}/>
+        </View> */}
+        </View>
       </ScrollView>
     </View>
   );

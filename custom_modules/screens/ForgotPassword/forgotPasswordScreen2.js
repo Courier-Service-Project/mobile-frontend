@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import {useNavigation} from '@react-navigation/native';
 import {PasswordInput} from '../../components/textInput';
-import passwordLock from '../../icons/passwordLock.png';
+import resetPasswordImage from '../../icons/resetPassword.jpg';
 import {
   ResultModal,
   ResultModalSuccess,
@@ -68,7 +68,7 @@ const ForgotPasswordScreen2 = () => {
     setShow(true);
     try {
       const result = await axios.post(
-        'http://10.10.13.237:9000/api/mobile/users/resendOtp',
+        `http://192.168.245.137:9000/api/mobile/users/resendOtp`,
         {email},
       );
       setShow(false);
@@ -119,8 +119,9 @@ const ForgotPasswordScreen2 = () => {
         <View style={passwordResetStyles.screenTop}>
           <Text style={passwordResetStyles.textTop}>Email Verification</Text>
         </View>
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
-          <Image source={passwordLock} />
+       
+          <View style={{marginTop:30,alignItems:'center'}}>
+          <Image source={resetPasswordImage}style={passwordResetStyles.topImageView} />
         </View>
         <View
           style={[passwordResetStyles.textSubTopicContainer, {marginTop: 10}]}>

@@ -14,15 +14,24 @@ import {
   ResultModal,
   ResultModalSuccess,
 } from '../../components/modals/resultModal';
+import {useNavigation} from '@react-navigation/native';
 
 const PendingScreen = () => {
   const window = useWindowDimensions();
+  const navigation = useNavigation();
+
   const [pendingOrders, setPendingOrders] = useState([{}]);
   const [mergeSort, setMergeSort] = useState([]);
   const [orderProvince, setOrderProvince] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [showResultModal, setResultModal] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
+
+  const orderDetailsNavigation = order_id => {
+    navigation.navigate('OrderDetailsScreen', {
+      order_id: order_id,
+    });
+  };
 
   useEffect(() => {
     sendRequest();
@@ -62,10 +71,10 @@ const PendingScreen = () => {
     };
     try {
       const result = await axios.post(
-        `http://10.10.13.237:9000/api/mobile/orders/updatePendingState/${order_id}`,
+        `http://192.168.245.137:9000/api/mobile/orders/updatePendingState/${order_id}`,
         body,
       );
-      console.log(result);
+      console.log(result.data.message[0]);
     } catch (error) {
       setModalMessage(error.message);
       showResultModal(true);
@@ -86,7 +95,7 @@ const PendingScreen = () => {
     let branchLocation = await AsyncStorage.getItem('branchLocation');
     try {
       const result = await axios.get(
-        `http://10.10.13.237:9000/api/mobile/orders/${branchLocation}`,
+        `http://192.168.235.137:9000/api/mobile/orders/${branchLocation}`,
       );
       setPendingOrders(result.data.message);
     } catch (error) {
@@ -189,7 +198,8 @@ const PendingScreen = () => {
                         style={[
                           ActitvityStyles.Button,
                           {backgroundColor: '#044B55'},
-                        ]}>
+                        ]}
+                        onPress={() => orderDetailsNavigation(item.Order_id)}>
                         <Text style={ActitvityStyles.ButtonText}>
                           Order Details
                         </Text>
