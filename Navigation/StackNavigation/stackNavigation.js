@@ -15,7 +15,8 @@ const StackNavigation = () => {
   return (
     <stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="StatusUpdateScreen">
+      initialRouteName="Login">
+
       <stack.Screen name="Login" component={Login}></stack.Screen>
       <stack.Screen
         name="ResetPassword"

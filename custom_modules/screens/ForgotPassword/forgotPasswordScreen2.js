@@ -68,7 +68,7 @@ const ForgotPasswordScreen2 = () => {
     setShow(true);
     try {
       const result = await axios.post(
-        'http://10.10.13.237:9000/api/mobile/users/resendOtp',
+        'http://192.168.43.137:9000/api/mobile/users/resendOtp',
         {email},
       );
       setShow(false);
