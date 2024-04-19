@@ -2,6 +2,7 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 
 const modalStyle = StyleSheet.create({
+  
   modalContainer: {
     flex: 1,
     alignItems: 'center',

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Dimensions,
   Image,
   Modal,
   StyleSheet,
@@ -95,7 +94,7 @@ export {ResultModal, ResultModalSuccessNavigation, ResultModalSuccess};
 const style = StyleSheet.create({
   modalContainer: {
     padding: 30,
-    width: 370,
+    width: '90%',
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',

@@ -1,5 +1,11 @@
 import React, {useState} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import passwordResetStyles from '../styles/passwordReset';
 import AppHeaderBackArrow from '../components/appHeaderBackArrow';
 import textInputs from '../styles/textInputStyles';
@@ -14,6 +20,7 @@ import FullScreenModal from '../components/modals/fullScreenModal';
 import {ResultModal} from '../components/modals/resultModal';
 
 const ResetPassword = () => {
+  const window = useWindowDimensions();
   const navigation = useNavigation();
   const [oldPassword, setOldPassword] = useState('');
   const [newpassword, setNewPassword] = useState('');
@@ -82,7 +89,7 @@ const ResetPassword = () => {
   };
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{flex: 1, width: window.width, height: window.height}}>
       <FullScreenModal
         title={'Password has been reset'}
         function={navigationScreen}

@@ -17,8 +17,10 @@ import {
 import {useIsFocused} from '@react-navigation/native';
 
 const PendingScreen = () => {
-  const width = useWindowDimensions();
+
+  const window = useWindowDimensions();
   const isFocoused = useIsFocused();
+
   const [pendingOrders, setPendingOrders] = useState([{}]);
   const [mergeSort, setMergeSort] = useState([]);
   const [orderProvince, setOrderProvince] = useState('');
@@ -111,7 +113,14 @@ const PendingScreen = () => {
   };
 
   return (
-    <View style={{flex: 1, marginBottom: 10, backgroundColor: '#ffffff'}}>
+    <View
+      style={{
+        flex: 1,
+        marginBottom: 10,
+        backgroundColor: '#ffffff',
+        width: window.width,
+        height: window.height,
+      }}>
       <ScrollView>
         <View>
           <View>
