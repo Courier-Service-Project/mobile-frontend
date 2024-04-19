@@ -28,18 +28,18 @@ const ResetPassword = () => {
   };
 
   const sendData = async () => {
-    let token = await AsyncStorage.getItem('token');
+    //let token = await AsyncStorage.getItem('token');
     let userName = await AsyncStorage.getItem('userName');
-    console.log(token);
+    //console.log(token);
     const data = {
-      token,
+      //token,
       oldPassword,
       newpassword,
       userName,
     };
     try {
       const result = await axios.patch(
-        'http://10.10.13.237:9000/api/mobile/users/resetPassword',
+        'http://192.168.43.137:9000/api/mobile/users/resetPassword',
         data,
       );
       if (result.data.success == 200) {

@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {
+  FlatList,
+  Text,
+  TouchableOpacity,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import ActitvityStyles from '../../styles/activityScreenStyles';
@@ -8,8 +14,11 @@ import {
   ResultModal,
   ResultModalSuccess,
 } from '../../components/modals/resultModal';
+import {useIsFocused} from '@react-navigation/native';
 
 const PendingScreen = () => {
+  const width = useWindowDimensions();
+  const isFocoused = useIsFocused();
   const [pendingOrders, setPendingOrders] = useState([{}]);
   const [mergeSort, setMergeSort] = useState([]);
   const [orderProvince, setOrderProvince] = useState('');
@@ -18,18 +27,23 @@ const PendingScreen = () => {
   const [showSuccessModal, setSuccessModal] = useState(false);
 
   useEffect(() => {
-    sendRequest();
-  }, []);
+    if (isFocoused) {
+      sendRequest();
+    }
+  }, [isFocoused]);
 
   //in here  sortingList() will active once the pendingOrder list formed.
   //state initialization is asynchronous
-  useEffect(() => {
-    sortingList();
-  }, [pendingOrders]);
-
+  useEffect(
+    () => {
+      sortingList();
+    },
+    [pendingOrders],
+    [mergeSort],
+  );
 
   //in here it will only get the items with the same province
-  
+
   const AcceptOrder = items => {
     if (orderProvince === '') {
       setOrderProvince(items.DiliveryProvince);
@@ -56,10 +70,13 @@ const PendingScreen = () => {
     };
     try {
       const result = await axios.post(
-        `http://10.10.13.237:9000/api/mobile/orders/updatePendingState/${order_id}`,
+        `http://192.168.43.137:9000/api/mobile/orders/updatePendingState/${order_id}`,
         body,
       );
-      console.log(result);
+      if (isFocoused) {
+        await sendRequest();
+      }
+      console.log(result.data.message);
     } catch (error) {
       setModalMessage(error.message);
       showResultModal(true);
@@ -80,9 +97,14 @@ const PendingScreen = () => {
     let branchLocation = await AsyncStorage.getItem('branchLocation');
     try {
       const result = await axios.get(
-        `http://10.10.13.237:9000/api/mobile/orders/${branchLocation}`,
+        `http://192.168.43.137:9000/api/mobile/orders/${branchLocation}`,
       );
-      setPendingOrders(result.data.message);
+      if ((result.data.success == 200)) {
+        setPendingOrders(result.data.message);
+      } else if ((result.data.success == 100)) {
+        setMergeSort([]);
+        console.log('No orders found');
+      }
     } catch (error) {
       console.log(error.message);
     }
