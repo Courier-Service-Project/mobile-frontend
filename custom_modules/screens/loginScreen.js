@@ -47,12 +47,14 @@ const Login = () => {
 
     try {
       const result = await axios.post(
-        'http://10.10.13.237:9000/api/mobile/users/login',
+        'http://192.168.43.137:9000/api/mobile/users/login',
         userdata,
       );
       const {success, token, message} = result.data;
       if (success == 200) {
-        AsyncStorage.setItem('token', token);
+        console.log(message[0].FirstName);
+
+        //AsyncStorage.setItem('token', token);
         AsyncStorage.setItem('userName', message[0].FirstName);
         AsyncStorage.setItem('branchLocation', message[0].branchLocation);
         AsyncStorage.setItem('user_id', message[0].BranchUser_id + '');
