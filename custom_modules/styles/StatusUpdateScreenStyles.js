@@ -20,8 +20,6 @@ const StatusUpdateStyles = StyleSheet.create({
     margin: 15,
     flexDirection: 'row',
     alignItems:'center',
-    // flex:1,
-    // flexWrap:'wrap'
   },
   itemText: {
     color: '#128F87',
@@ -43,6 +41,11 @@ const StatusUpdateStyles = StyleSheet.create({
     height:20,
     backgroundColor:'#128F87',
     borderRadius:10
+  },
+  bottomImageView:{
+    alignItems:'center',
+    justifyContent:'center',
+    marginTop:30,
   }
 });
 

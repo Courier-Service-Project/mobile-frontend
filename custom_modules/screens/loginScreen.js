@@ -50,13 +50,13 @@ const Login = () => {
 
     try {
       const result = await axios.post(
+
         'http://192.168.43.137:9000/api/mobile/users/login',
+
         userdata,
       );
-      const {success, token, message} = result.data;
+      const {success, message} = result.data;
       if (success == 200) {
-        console.log(message[0].FirstName);
-
         //AsyncStorage.setItem('token', token);
         AsyncStorage.setItem('userName', message[0].FirstName);
         AsyncStorage.setItem('branchLocation', message[0].branchLocation);
@@ -70,7 +70,7 @@ const Login = () => {
         }
       } else if (success == 101) {
         setResultModal(true);
-        setModalMessage('Invalid Credentials!');
+        setModalMessage('Invalid Email');
         setName('');
         setPassword('');
       }

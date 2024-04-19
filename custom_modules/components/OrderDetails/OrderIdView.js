@@ -1,16 +1,16 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-const OrderIdView = () => {
+const OrderIdView = (props) => {
   return (
     <View>
       <Text style={Styles.orderText}>Order details</Text>
       <View style={Styles.orderIdView}>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={Styles.idText}>Order ID : </Text>
+          <Text style={Styles.idText}>Order ID   : </Text>
         </View>
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={Styles.idText}>1001</Text>
+          <Text style={Styles.idText}>{props.order_id}</Text>
         </View>
       </View>
     </View>

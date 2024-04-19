@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 
 const HomeStyles = StyleSheet.create({
   topView: {
-    backgroundColor: '#12ABA2',
+    backgroundColor: '#128F87',
     //flex: 1,
     height: 328,
     borderBottomLeftRadius: 40,
@@ -53,8 +53,8 @@ const HomeStyles = StyleSheet.create({
     alignItems:'center'
   },
   card: {
-    width: 150,
-    height: 150,
+    width: 160,
+    height: 160,
     backgroundColor: '#fff',
     borderRadius: 30,
     alignItems: 'center',
@@ -70,8 +70,19 @@ const HomeStyles = StyleSheet.create({
   },
   earnText:{
     fontSize:30,
-    fontWeight:'700',
-    color:'#fff'
+    color:'#044B55'
+  },
+  earnView:{
+    width: '80%',
+    height: 150,
+    backgroundColor: '#fff',
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 12,
+    shadowColor: '#12ABA2',
+    elevation: 10,
+    flexDirection:'row'
   }
 });
 

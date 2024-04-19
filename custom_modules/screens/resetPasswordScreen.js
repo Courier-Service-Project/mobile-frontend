@@ -39,14 +39,19 @@ const ResetPassword = () => {
     let userName = await AsyncStorage.getItem('userName');
     //console.log(token);
     const data = {
+
+
       //token,
+
       oldPassword,
       newpassword,
       userName,
     };
     try {
       const result = await axios.patch(
+
         'http://192.168.43.137:9000/api/mobile/users/resetPassword',
+
         data,
       );
       if (result.data.success == 200) {
@@ -65,7 +70,7 @@ const ResetPassword = () => {
   };
 
   const resetPassword = () => {
-    console.log('hello world');
+  
     if (!oldPassword || !newpassword || !confirmNewPassword) {
       setResultModal(true);
       setModalMessage('All the feilds must be filled!');

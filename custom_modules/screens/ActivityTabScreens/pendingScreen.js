@@ -14,12 +14,18 @@ import {
   ResultModal,
   ResultModalSuccess,
 } from '../../components/modals/resultModal';
+
+import {useNavigation} from '@react-navigation/native';
+=======
 import {useIsFocused} from '@react-navigation/native';
+
 
 const PendingScreen = () => {
 
   const window = useWindowDimensions();
+  const navigation = useNavigation();
   const isFocoused = useIsFocused();
+
 
   const [pendingOrders, setPendingOrders] = useState([{}]);
   const [mergeSort, setMergeSort] = useState([]);
@@ -27,6 +33,12 @@ const PendingScreen = () => {
   const [modalMessage, setModalMessage] = useState('');
   const [showResultModal, setResultModal] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
+
+  const orderDetailsNavigation = order_id => {
+    navigation.navigate('OrderDetailsScreen', {
+      order_id: order_id,
+    });
+  };
 
   useEffect(() => {
     if (isFocoused) {
@@ -99,7 +111,9 @@ const PendingScreen = () => {
     let branchLocation = await AsyncStorage.getItem('branchLocation');
     try {
       const result = await axios.get(
+
         `http://192.168.43.137:9000/api/mobile/orders/${branchLocation}`,
+
       );
       if ((result.data.success == 200)) {
         setPendingOrders(result.data.message);
@@ -207,7 +221,8 @@ const PendingScreen = () => {
                         style={[
                           ActitvityStyles.Button,
                           {backgroundColor: '#044B55'},
-                        ]}>
+                        ]}
+                        onPress={() => orderDetailsNavigation(item.Order_id)}>
                         <Text style={ActitvityStyles.ButtonText}>
                           Order Details
                         </Text>

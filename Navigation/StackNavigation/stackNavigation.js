@@ -9,6 +9,8 @@ import BottomTabNavigator from '../BottomTabNavigation/bottomTabNavigation';
 import AppHeader from '../../custom_modules/components/appHeader';
 import OrderDetailsScreen from '../../custom_modules/screens/OrderDetailsScreen';
 import StatusUpdateScreen from '../../custom_modules/screens/StatusUpdateScreen';
+import CalculatePriceScreen1 from '../../custom_modules/screens/calculatePrice/CalculatePriceScreen1';
+import CalculatePriceScreen2 from '../../custom_modules/screens/calculatePrice/CalculatePriceScreen2';
 
 const stack = createNativeStackNavigator();
 const StackNavigation = () => {
@@ -16,7 +18,6 @@ const StackNavigation = () => {
     <stack.Navigator
       screenOptions={{headerShown: false}}
       initialRouteName="Login">
-
       <stack.Screen name="Login" component={Login}></stack.Screen>
       <stack.Screen
         name="ResetPassword"
@@ -42,6 +43,14 @@ const StackNavigation = () => {
       <stack.Screen
         name="StatusUpdateScreen"
         component={StatusUpdateScreen}></stack.Screen>
+
+      <stack.Screen
+        name="CalculatePriceScreen1"
+        component={CalculatePriceScreen1}></stack.Screen>
+
+      <stack.Screen
+        name="CalculatePriceScreen2"
+        component={CalculatePriceScreen2}></stack.Screen>
     </stack.Navigator>
   );
 };

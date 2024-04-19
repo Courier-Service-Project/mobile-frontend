@@ -44,6 +44,13 @@ const passwordResetStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  topImageView:{
+    width:200,
+    height:200,
+    borderRadius:100,
+    alignItems:'center',
+    justifyContent:'center'
+  }
 });
 
 export default passwordResetStyles;
