@@ -65,7 +65,9 @@ const ForgotPasswordScreen3 = () => {
           };
           try {
             const result = await axios.patch(
-              `http://192.168.245.137:9000/api/mobile/users/resetForgotPassword`,
+
+              'http://192.168.43.137:9000/api/mobile/users/resetForgotPassword',
+
               body,
             );
             if (result.data.success == 200) {

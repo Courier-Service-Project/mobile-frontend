@@ -14,11 +14,18 @@ import {
   ResultModal,
   ResultModalSuccess,
 } from '../../components/modals/resultModal';
+
 import {useNavigation} from '@react-navigation/native';
+=======
+import {useIsFocused} from '@react-navigation/native';
+
 
 const PendingScreen = () => {
+
   const window = useWindowDimensions();
   const navigation = useNavigation();
+  const isFocoused = useIsFocused();
+
 
   const [pendingOrders, setPendingOrders] = useState([{}]);
   const [mergeSort, setMergeSort] = useState([]);
@@ -34,14 +41,20 @@ const PendingScreen = () => {
   };
 
   useEffect(() => {
-    sendRequest();
-  }, []);
+    if (isFocoused) {
+      sendRequest();
+    }
+  }, [isFocoused]);
 
   //in here  sortingList() will active once the pendingOrder list formed.
   //state initialization is asynchronous
-  useEffect(() => {
-    sortingList();
-  }, [pendingOrders]);
+  useEffect(
+    () => {
+      sortingList();
+    },
+    [pendingOrders],
+    [mergeSort],
+  );
 
   //in here it will only get the items with the same province
 
@@ -71,10 +84,13 @@ const PendingScreen = () => {
     };
     try {
       const result = await axios.post(
-        `http://192.168.245.137:9000/api/mobile/orders/updatePendingState/${order_id}`,
+        `http://192.168.43.137:9000/api/mobile/orders/updatePendingState/${order_id}`,
         body,
       );
-      console.log(result.data.message[0]);
+      if (isFocoused) {
+        await sendRequest();
+      }
+      console.log(result.data.message);
     } catch (error) {
       setModalMessage(error.message);
       showResultModal(true);
@@ -95,9 +111,16 @@ const PendingScreen = () => {
     let branchLocation = await AsyncStorage.getItem('branchLocation');
     try {
       const result = await axios.get(
-        `http://192.168.235.137:9000/api/mobile/orders/${branchLocation}`,
+
+        `http://192.168.43.137:9000/api/mobile/orders/${branchLocation}`,
+
       );
-      setPendingOrders(result.data.message);
+      if ((result.data.success == 200)) {
+        setPendingOrders(result.data.message);
+      } else if ((result.data.success == 100)) {
+        setMergeSort([]);
+        console.log('No orders found');
+      }
     } catch (error) {
       console.log(error.message);
     }

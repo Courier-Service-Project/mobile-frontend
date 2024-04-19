@@ -81,7 +81,9 @@ const ForgotPasswordScreen1 = () => {
       setShow(true);
       try {
         const results = await axios.post(
-          `http://192.168.245.137:9000/api/mobile/users/verifyEmail`,
+
+          'http://192.168.43.137:9000/api/mobile/users/verifyEmail',
+
           body,
         );
         if (results.data.success == 200) {
