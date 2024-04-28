@@ -11,6 +11,7 @@ const OrderDetailsScreen = ({route}) => {
   const window = useWindowDimensions();
   const navigation = useNavigation();
   const {order_id} = route.params;
+  const {screen_type} = route.params;
 
   const [orderDetails, setOrderDetails] = useState();
   const [show, setShow] = useState(false);
@@ -40,7 +41,7 @@ const OrderDetailsScreen = ({route}) => {
   const getOrderDetails = async () => {
     try {
       const result = await axios.get(
-        `http://192.168.235.137:9000/api/mobile/orders/getOrderDetails/${order_id}`,
+        `http://10.10.12.53:9000/api/mobile/orders/getOrderDetails/${order_id}`,
       );
       setOrderDetails(result.data.message[0]);
     } catch (error) {
@@ -190,20 +191,23 @@ const OrderDetailsScreen = ({route}) => {
             )}
           </View>
         </View>
-
+        {screen_type != 'ps'?
         <View style={OrderStyles.buttonView}>
-          <TouchableOpacity
-            style={OrderStyles.updateStatusView}
-            onPress={statusUpdateNavigation}>
-            <Text style={OrderStyles.buttonText}>Update Status</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={OrderStyles.updateStatusView}
+          onPress={statusUpdateNavigation}>
+          <Text style={OrderStyles.buttonText}>Update Status</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity
-            style={OrderStyles.priceButtonView}
-            onPress={calculatePriceNavigation}>
-            <Text style={OrderStyles.buttonText}>Calculate Price</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity
+          style={OrderStyles.priceButtonView}
+          onPress={calculatePriceNavigation}>
+          <Text style={OrderStyles.buttonText}>Calculate Price</Text>
+        </TouchableOpacity>
+      </View>:<Text></Text>
+        
+      }
+        
       </ScrollView>
     </View>
   );
