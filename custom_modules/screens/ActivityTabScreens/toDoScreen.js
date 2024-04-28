@@ -4,31 +4,35 @@ import {ScrollView} from 'react-native-virtualized-view';
 import ActitvityStyles from '../../styles/activityScreenStyles';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useIsFocused} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 
 const ToDoScreen = () => {
-  const isFocoused = useIsFocused();
+  const isFocousedToDoScreen = useIsFocused();
   const [todoList, setTodoList] = useState([{}]);
   const [sortTodoList, setSortTodoList] = useState([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
-    if (isFocoused) {
+    if (isFocousedToDoScreen) {
       sendToDoRequest();
     }
-  }, [isFocoused]);
+  }, [isFocousedToDoScreen]);
 
   useEffect(
     () => {
-      if (isFocoused && todoList.length > 0) {
-        sortOrders();
+      if (isFocousedToDoScreen) {
+        if (todoList.length > 0) {
+          sortOrders();
+        }
       }
     },
     [todoList],
-    [isFocoused],
+    [isFocousedToDoScreen],
     [sortTodoList],
   );
 
-  const sortOrders =  () => {
+
+  const sortOrders = async () => {
     const normalOrders = todoList.filter(order => order.Emmergency == 'F');
     const emmergencyOrders = todoList.filter(order => order.Emmergency == 'T');
     setSortTodoList([...emmergencyOrders, ...normalOrders]);
@@ -39,15 +43,19 @@ const ToDoScreen = () => {
       const branchLocation = await AsyncStorage.getItem('branchLocation');
       const user_id = await AsyncStorage.getItem('user_id');
       const result = await axios.get(
-        `http://192.168.43.137:9000/api/mobile/orders/getToDoOrders/${branchLocation}/${user_id}`,
+        `http://10.10.12.53:9000/api/mobile/orders/getToDoOrders/${branchLocation}/${user_id}`,
       );
-      //console.log(result.data.message);
       if (result.data.success == 200) {
         setTodoList(result.data.message);
       } else if (result.data.success == 101) {
-        setSortTodoList([]);
-        //sortOrders();
-        //Alert.alert('No order found');
+        await setSortTodoList([]);
+        await AsyncStorage.removeItem('lastDiliveryProvince');
+        await AsyncStorage.setItem('lastDiliveryProvince', 'NPS');
+        console.log(
+          `Updated AsyncStorage ${await AsyncStorage.getItem(
+            'lastDiliveryProvince',
+          )}`,
+        );
       }
     } catch (error) {
       console.log(error.message);
@@ -57,10 +65,10 @@ const ToDoScreen = () => {
   const cancelOrder = async order_id => {
     try {
       const result = await axios.patch(
-        `http://192.168.43.137:9000/api/mobile/orders/cancelToDoOrder/${order_id}`,
+        `http://10.10.12.53:9000/api/mobile/orders/cancelToDoOrder/${order_id}`,
       );
       console.log(result.data.message);
-      if (isFocoused) {
+      if (isFocousedToDoScreen) {
         await sendToDoRequest();
       }
     } catch (error) {
@@ -68,7 +76,12 @@ const ToDoScreen = () => {
     }
   };
 
-  
+  const orderDetailsNavigation = order_id => {
+    navigation.navigate('OrderDetailsScreen', {
+      order_id: order_id,
+      screen_type: 'tds',
+    });
+  };
 
   return (
     <View style={{flex: 1, marginBottom: 10, backgroundColor: '#ffffff'}}>
@@ -127,7 +140,7 @@ const ToDoScreen = () => {
                 </View>
 
                 <View style={ActitvityStyles.buttonContainer}>
-                  <TouchableOpacity
+                  {/* <TouchableOpacity
                     style={[
                       ActitvityStyles.Button,
                       {backgroundColor: '#20DED2'},
@@ -135,7 +148,7 @@ const ToDoScreen = () => {
                     <Text style={ActitvityStyles.ButtonText}>
                       Confirm Order
                     </Text>
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
 
                   <TouchableOpacity
                     onPress={() => {
@@ -152,9 +165,12 @@ const ToDoScreen = () => {
                     style={[
                       ActitvityStyles.Button,
                       {backgroundColor: '#044B55'},
-                    ]}>
+                    ]}
+                    onPress={() => {
+                      orderDetailsNavigation(item.Order_id);
+                    }}>
                     <Text style={ActitvityStyles.ButtonText}>
-                      Change Status
+                      Order Details
                     </Text>
                   </TouchableOpacity>
                 </View>

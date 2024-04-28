@@ -50,7 +50,7 @@ const ResetPassword = () => {
     try {
       const result = await axios.patch(
 
-        'http://192.168.43.137:9000/api/mobile/users/resetPassword',
+        'http://10.10.12.53:9000/api/mobile/users/resetPassword',
 
         data,
       );
