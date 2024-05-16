@@ -23,82 +23,85 @@ const StatusUpdateScreen = ({route}) => {
   return (
     <View style={{width: window.width, height: window.height}}>
       <View>
-        <OrderHeaderBackArrow prevScreen={'OrderDetailsScreen'} order_id={order_id} />
+        <OrderHeaderBackArrow
+          prevScreen={'OrderDetailsScreen'}
+          order_id={order_id}
+        />
       </View>
       <ScrollView>
         <View st>
-        <View>
-          <OrderIdView order_id={order_id} />
-        </View>
+          <View>
+            <OrderIdView order_id={order_id} />
+          </View>
 
-        <View style={{marginHorizontal: 25}}>
-          <View style={StatusUpdateStyles.orderStatusView}>
-            <Text style={StatusUpdateStyles.statusText}>Order Status </Text>
+          <View style={{marginHorizontal: 25}}>
+            <View style={StatusUpdateStyles.orderStatusView}>
+              <Text style={StatusUpdateStyles.statusText}>Order Status </Text>
 
-            <View style={{marginTop: 25}}>
-              <TouchableOpacity
-                style={StatusUpdateStyles.statusItemView}
-                onPress={() => setSelectedRadio(1)}>
-                <View style={{flex: 1, marginHorizontal: 25}}>
-                  <Text style={StatusUpdateStyles.itemText}>Pending</Text>
-                </View>
-                <View style={{marginHorizontal: 25}}>
-                  <View style={StatusUpdateStyles.radio}>
-                    {selectedRadio == 1 ? (
-                      <View style={StatusUpdateStyles.radioInsideView}></View>
-                    ) : null}
+              <View style={{marginTop: 25}}>
+                <TouchableOpacity
+                  style={StatusUpdateStyles.statusItemView}
+                  onPress={() => setSelectedRadio(1)}>
+                  <View style={{flex: 1, marginHorizontal: 25}}>
+                    <Text style={StatusUpdateStyles.itemText}>Pending</Text>
                   </View>
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={StatusUpdateStyles.statusItemView}
-                onPress={() => setSelectedRadio(2)}>
-                <View style={{flex: 1, marginHorizontal: 25}}>
-                  <Text style={StatusUpdateStyles.itemText}>Picked Up</Text>
-                </View>
-                <View style={{marginHorizontal: 25}}>
-                  <View style={StatusUpdateStyles.radio}>
-                    {selectedRadio == 2 ? (
-                      <View style={StatusUpdateStyles.radioInsideView}></View>
-                    ) : null}
+                  <View style={{marginHorizontal: 25}}>
+                    <View style={StatusUpdateStyles.radio}>
+                      {selectedRadio == 1 ? (
+                        <View style={StatusUpdateStyles.radioInsideView}></View>
+                      ) : null}
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={StatusUpdateStyles.statusItemView}
-                onPress={() => setSelectedRadio(3)}>
-                <View style={{flex: 1, marginHorizontal: 25}}>
-                  <Text style={StatusUpdateStyles.itemText}>On Delivery</Text>
-                </View>
-                <View style={{marginHorizontal: 25}}>
-                  <View style={StatusUpdateStyles.radio}>
-                    {selectedRadio == 3 ? (
-                      <View style={StatusUpdateStyles.radioInsideView}></View>
-                    ) : null}
+                <TouchableOpacity
+                  style={StatusUpdateStyles.statusItemView}
+                  onPress={() => setSelectedRadio(2)}>
+                  <View style={{flex: 1, marginHorizontal: 25}}>
+                    <Text style={StatusUpdateStyles.itemText}>Picked Up</Text>
                   </View>
-                </View>
-              </TouchableOpacity>
+                  <View style={{marginHorizontal: 25}}>
+                    <View style={StatusUpdateStyles.radio}>
+                      {selectedRadio == 2 ? (
+                        <View style={StatusUpdateStyles.radioInsideView}></View>
+                      ) : null}
+                    </View>
+                  </View>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={StatusUpdateStyles.statusItemView}
-                onPress={() => setSelectedRadio(4)}>
-                <View style={{flex: 1, marginHorizontal: 25}}>
-                  <Text style={StatusUpdateStyles.itemText}>Delivered</Text>
-                </View>
-                <View style={{marginHorizontal: 25}}>
-                  <View style={StatusUpdateStyles.radio}>
-                    {selectedRadio == 4 ? (
-                      <View style={StatusUpdateStyles.radioInsideView}></View>
-                    ) : null}
+                <TouchableOpacity
+                  style={StatusUpdateStyles.statusItemView}
+                  onPress={() => setSelectedRadio(3)}>
+                  <View style={{flex: 1, marginHorizontal: 25}}>
+                    <Text style={StatusUpdateStyles.itemText}>On Delivery</Text>
                   </View>
-                </View>
-              </TouchableOpacity>
+                  <View style={{marginHorizontal: 25}}>
+                    <View style={StatusUpdateStyles.radio}>
+                      {selectedRadio == 3 ? (
+                        <View style={StatusUpdateStyles.radioInsideView}></View>
+                      ) : null}
+                    </View>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={StatusUpdateStyles.statusItemView}
+                  onPress={() => setSelectedRadio(4)}>
+                  <View style={{flex: 1, marginHorizontal: 25}}>
+                    <Text style={StatusUpdateStyles.itemText}>Delivered</Text>
+                  </View>
+                  <View style={{marginHorizontal: 25}}>
+                    <View style={StatusUpdateStyles.radio}>
+                      {selectedRadio == 4 ? (
+                        <View style={StatusUpdateStyles.radioInsideView}></View>
+                      ) : null}
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-{/* 
+          {/* 
         <View style={StatusUpdateStyles.bottomImageView}>
           <Image source={updateStatusImage}/>
         </View> */}
