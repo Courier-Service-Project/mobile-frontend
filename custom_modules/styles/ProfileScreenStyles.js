@@ -22,6 +22,7 @@ const ProfileStyles = StyleSheet.create({
     marginHorizontal: 25,
     margin: 6,
   },
+
   profileimageView: {
     backgroundColor: '#044B55',
     width: 70,
@@ -31,6 +32,44 @@ const ProfileStyles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'flex-end',
   },
+  addIcon: {
+    width: 30,
+    height: 30,
+  },
+  profileImage: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+  },
+  modal: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalItem: {
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#52919A',
+    margin: 10,
+    borderRadius: 40,
+  },
+  modalText: {
+    fontSize: 20,
+    color: '#000000',
+    fontWeight: '400',
+  },
+
   bottomView: {
     borderWidth: 0.1,
     borderColor: '#52919A',
