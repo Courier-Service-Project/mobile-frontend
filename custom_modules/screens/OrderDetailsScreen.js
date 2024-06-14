@@ -41,7 +41,7 @@ const OrderDetailsScreen = ({route}) => {
   const getOrderDetails = async () => {
     try {
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/getOrderDetails/${order_id}`,
+        `http://192.168.43.137:9000/api/mobile/orders/getOrderDetails/${order_id}`,
       );
       setOrderDetails(result.data.message[0]);
     } catch (error) {

@@ -43,7 +43,7 @@ const ToDoScreen = () => {
       const branchLocation = await AsyncStorage.getItem('branchLocation');
       const user_id = await AsyncStorage.getItem('user_id');
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/getToDoOrders/${branchLocation}/${user_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/getToDoOrders/${branchLocation}/${user_id}`,
       );
       if (result.data.success == 200) {
         setTodoList(result.data.message);
@@ -65,7 +65,7 @@ const ToDoScreen = () => {
   const cancelOrder = async order_id => {
     try {
       const result = await axios.patch(
-        `http://10.10.12.53:9000/api/mobile/orders/cancelToDoOrder/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/cancelToDoOrder/${order_id}`,
       );
       console.log(result.data.message);
       if (isFocousedToDoScreen) {

@@ -37,7 +37,7 @@ const CalculatePriceScreen2 = ({route}) => {
   const getOrderPriceDetails = async () => {
     try {
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/getPriceDetails/${order_id}`,
+        `http://192.168.43.137:9000/api/mobile/orders/getPriceDetails/${order_id}`,
       );
       if (result.data.success == 200) {
         setDistanceCost(result.data.message[0].Distance_Cost);

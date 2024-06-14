@@ -26,7 +26,6 @@ const PendingScreen = () => {
 
   const [pendingOrders, setPendingOrders] = useState([{}]);
   const [mergeSort, setMergeSort] = useState([]);
-  const [orderProvince, setOrderProvince] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [showResultModal, setResultModal] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
@@ -67,15 +66,15 @@ const PendingScreen = () => {
       await AsyncStorage.removeItem('lastDiliveryProvince');
       await AsyncStorage.setItem('lastDiliveryProvince',items.DiliveryProvince)
       setLastDiliveryProvince(items.DiliveryProvince);
-      updateStatusRequest(items);
+      await updateStatusRequest(items);
       setModalMessage('Order added successfully');
       setSuccessModal(true);
-      sendRequest();
+      await sendRequest();
     } else if (items.DiliveryProvince == lastDiliveryProvince) {
-      updateStatusRequest(items);
+      await updateStatusRequest(items);
       setModalMessage('Order added successfully');
       setSuccessModal(true);
-      sendRequest();
+      await sendRequest();
     } else {
       setModalMessage('Orders must be in same Province');
       setResultModal(true);
@@ -86,18 +85,20 @@ const PendingScreen = () => {
   const updateStatusRequest = async items => {
     let order_id = items.Order_id;
     let user_id = await AsyncStorage.getItem('user_id');
-    const body = {
-      user_id,
-    };
     try {
       setLoading(true);
       const result = await axios.post(
-        `http://10.10.12.53:9000/api/mobile/orders/updatePendingState/${order_id}`,
-        body,
+        `http://10.10.27.131:9000/api/mobile/orders/updatePendingState/${order_id}/${user_id}`,
       );
       // if (isFocoused) {
       //   await sendRequest();
       // }
+      if(result.data.success==200){
+        setLoading('false')
+      }else if(result.data.success==101){
+        setModalMessage(result.data.message);
+      showResultModal(true);
+      }
       console.log(result.data.message);
     } catch (error) {
       setModalMessage(error.message);
@@ -119,7 +120,7 @@ const PendingScreen = () => {
     let branchLocation = await AsyncStorage.getItem('branchLocation');
     try {
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/${branchLocation}`,
+        `http://10.10.27.131:9000/api/mobile/orders/${branchLocation}`,
       );
       if (result.data.success == 200) {
         setPendingOrders(result.data.message);
