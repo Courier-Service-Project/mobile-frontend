@@ -48,11 +48,20 @@ const ForgotPasswordScreen2 = () => {
 
   //in here this  will delete the otp in async storage.
   const deleteOtp = async () => {
+    const email=await AsyncStorage.getItem('email');
     try {
-      await AsyncStorage.removeItem('otp');
-      console.log('item removed');
-    } catch (e) {
-      return false;
+      const result=await axios.delete(`http://192.168.43.137:9000/api/mobile/users/deleteOtp/${email}`);
+      if(result.data.success=200){
+        setModalMessage('Email Verified Successfully');
+        setSuccessModalNavigation(true);
+      }else if(result.data.success==101){
+        setModalMessage(result.data.message);
+        setResultModal(true);
+      }
+      console.log(result);
+    } catch (error) {
+      setModalMessage(error.message);
+      setResultModal(true);
     }
   };
 
@@ -63,20 +72,21 @@ const ForgotPasswordScreen2 = () => {
 
   //in here this will get the otp once resend button is pressed
   const resendOtp = async () => {
-    deleteOtp();
     const email = await AsyncStorage.getItem('email');
     setShow(true);
     try {
-      const result = await axios.post(
-
-        'http://192.168.43.137:9000/api/mobile/users/resendOtp',
-
-        {email},
+      const result = await axios.get(
+        `http://192.168.43.137:9000/api/mobile/users/resendOtp/${email}`,
       );
-      setShow(false);
-      AsyncStorage.setItem('otp', result.data.message);
-      setModalMessage('Your OTP is sent to ur email');
-      setSuccessModal(true);
+      if ((result.data.success = 200)) {
+        setShow(false);
+        setModalMessage('Your OTP is sent to ur email');
+        setSuccessModal(true);
+      } else if (result.data.success == 101) {
+        setShow(false);
+        setModalMessage(result.data.message);
+        setResultModal(true);
+      }
     } catch (error) {
       setShow(false);
       setModalMessage(error.message);
@@ -85,20 +95,29 @@ const ForgotPasswordScreen2 = () => {
   };
 
   const verifyOtp = async () => {
-    const backendOtp = await AsyncStorage.getItem('otp');
     if (validateOtp()) {
-      if (backendOtp == otp) {
-        setModalMessage('Email Verified Successfully');
-        setSuccessModalNavigation(true);
-      } else {
-        setModalMessage('OTP is not correct.Try Again!');
+      let email = await AsyncStorage.getItem('email');
+      try {
+        const result = await axios.get(
+          `http://192.168.43.137:9000/api/mobile/users/verifyOtp/${email}/${otp}`,
+        );
+        if (result.data.success == 200) {
+          await deleteOtp()
+        } else if (result.data.success == 101) {
+          setModalMessage(result.data.message);
+          setResultModal(true);
+          console.log(result.data.message);
+        }
+      } catch (error) {
+        console.log(error);
+        setModalMessage(error.message);
         setResultModal(true);
       }
     }
   };
 
   return (
-    <View style={{flex: 1,width:window.width,height:window.height}}>
+    <View style={{flex: 1, width: window.width, height: window.height}}>
       <View>
         <AppHeaderBackArrow prevScreen={'ForgotPasswordScreen1'} />
       </View>
@@ -121,9 +140,12 @@ const ForgotPasswordScreen2 = () => {
         <View style={passwordResetStyles.screenTop}>
           <Text style={passwordResetStyles.textTop}>Email Verification</Text>
         </View>
-       
-          <View style={{marginTop:30,alignItems:'center'}}>
-          <Image source={resetPasswordImage}style={passwordResetStyles.topImageView} />
+
+        <View style={{marginTop: 30, alignItems: 'center'}}>
+          <Image
+            source={resetPasswordImage}
+            style={passwordResetStyles.topImageView}
+          />
         </View>
         <View
           style={[passwordResetStyles.textSubTopicContainer, {marginTop: 10}]}>
