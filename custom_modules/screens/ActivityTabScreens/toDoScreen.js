@@ -14,6 +14,7 @@ const ToDoScreen = () => {
 
   useEffect(() => {
     if (isFocousedToDoScreen) {
+      console.log('in the todo tab')
       sendToDoRequest();
     }
   }, [isFocousedToDoScreen]);
@@ -43,7 +44,7 @@ const ToDoScreen = () => {
       const branchLocation = await AsyncStorage.getItem('branchLocation');
       const user_id = await AsyncStorage.getItem('user_id');
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/getToDoOrders/${branchLocation}/${user_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/getToDoOrders/${branchLocation}/${user_id}`,
       );
       if (result.data.success == 200) {
         setTodoList(result.data.message);
@@ -65,7 +66,7 @@ const ToDoScreen = () => {
   const cancelOrder = async order_id => {
     try {
       const result = await axios.patch(
-        `http://10.10.12.53:9000/api/mobile/orders/cancelToDoOrder/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/cancelToDoOrder/${order_id}`,
       );
       console.log(result.data.message);
       if (isFocousedToDoScreen) {
@@ -92,14 +93,33 @@ const ToDoScreen = () => {
             renderItem={({item}) => (
               <View style={ActitvityStyles.LayoutContainer}>
                 <View style={ActitvityStyles.OrderDetailsContiner}>
-                  <View style={ActitvityStyles.OrderDeatailsMainRow}>
-                    <Text style={ActitvityStyles.OrderDetailsMainRowKey}>
-                      Order_id:
-                    </Text>
-                    <Text style={ActitvityStyles.OrderDetailsMainValue}>
-                      {item.Order_id}
-                    </Text>
-                  </View>
+                  
+                <View
+                        style={{
+                          flex: 1,
+                          flexDirection: 'row',
+                          flexWrap: 'wrap',
+                          justifyContent: 'space-between',
+                          marginRight: 10,
+                        }}>
+                        <View style={ActitvityStyles.OrderDeatailsMainRow}>
+                          <Text style={ActitvityStyles.OrderDetailsMainRowKey}>
+                            Order ID:
+                          </Text>
+                          <Text style={ActitvityStyles.OrderDetailsMainValue}>
+                            {item.Order_id}
+                          </Text>
+                        </View>
+
+                        <View style={ActitvityStyles.OrderDeatailsMainRow}>
+                          <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                            Place Date:
+                          </Text>
+                          <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                            {new Date(item.orderPlaceDate).toLocaleDateString()}
+                          </Text>
+                        </View>
+                      </View>
 
                   <View style={ActitvityStyles.OrderDeatailsRow}>
                     <Text style={ActitvityStyles.OrderDetailsRowKey}>
@@ -178,8 +198,8 @@ const ToDoScreen = () => {
             )}
           />
         ) : (
-          <Text style={{fontSize: 24, color: 'red'}}>
-            No orders are avilable
+          <Text style={{textAlign: 'center', marginTop: 20}}>
+            No Todo orders are avilable
           </Text>
         )}
       </ScrollView>

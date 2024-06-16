@@ -41,7 +41,7 @@ const OrderDetailsScreen = ({route}) => {
   const getOrderDetails = async () => {
     try {
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/getOrderDetails/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/getOrderDetails/${order_id}`,
       );
       setOrderDetails(result.data.message[0]);
     } catch (error) {
@@ -118,6 +118,14 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>{orderDetails.M}</Text>
+                  </View>
+                </View>
+                <View style={OrderStyles.insideTextView}>
+                  <View style={{flex: 1}}>
+                    <Text style={OrderStyles.titleText}>Order Place Date</Text>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <Text style={OrderStyles.valueText}>{orderDetails.orderPlaceDate}</Text>
                   </View>
                 </View>
               </View>

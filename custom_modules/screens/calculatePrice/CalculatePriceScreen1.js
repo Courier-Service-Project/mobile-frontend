@@ -37,7 +37,7 @@ const CalculatePriceScreen1 = ({route}) => {
   const sendRequest = async () => {
     try {
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/getOrderTypeCost/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/getOrderTypeCost/${order_id}`,
       );
       setEmmergency(result.data.message[0].Emmergency);
       setDistanceCost(result.data.message[0].Distance_Cost);
@@ -57,7 +57,7 @@ const CalculatePriceScreen1 = ({route}) => {
         weightCost,
       };
       const result = await axios.patch(
-        `http://10.10.12.53:9000/api/mobile/orders/updateWeightCost/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/updateWeightCost/${order_id}`,
         body,
       );
       if (result.data.success == 200) {

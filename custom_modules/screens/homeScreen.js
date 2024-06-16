@@ -35,7 +35,7 @@ const HomeScreen = () => {
     const branchLocation = await AsyncStorage.getItem('branchLocation');
     try {
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/getOrderStateCount/${user_id}/${branchLocation}`,
+        `http://10.10.27.131:9000/api/mobile/orders/getOrderStateCount/${user_id}/${branchLocation}`,
       );
       setOrderStatusCount(result.data.message);
       console.log(result.data.message[4][0].DiliveryProvince);

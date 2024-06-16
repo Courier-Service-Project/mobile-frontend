@@ -51,16 +51,17 @@ const Login = () => {
     try {
       const result = await axios.post(
 
-        'http://10.10.12.53:9000/api/mobile/users/login',
+        'http://10.10.27.131:9000/api/mobile/users/login',
 
         userdata,
       );
-      const {success, message} = result.data;
+      const {success, message,token} = result.data;
       if (success == 200) {
-        //AsyncStorage.setItem('token', token);
+        AsyncStorage.setItem('token', token);
         AsyncStorage.setItem('userName', message[0].FirstName);
         AsyncStorage.setItem('branchLocation', message[0].branchLocation);
         AsyncStorage.setItem('user_id', message[0].BranchUser_id + '');
+        axios.defaults.headers.common['Authorization']=`Bearer ${token}`
         setPassword('');
         setName('');
         {
