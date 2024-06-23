@@ -61,8 +61,7 @@ const ForgotPasswordScreen1 = () => {
     navigation.navigate('ForgotPasswordScreen2');
   };
 
-  const successProcess = results => {
-    AsyncStorage.setItem('otp', results.data.message);
+  const successProcess = () => {
     AsyncStorage.setItem('userName', name);
     AsyncStorage.setItem('email', email);
     setSuccessModal(true);

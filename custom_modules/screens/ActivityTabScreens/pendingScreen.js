@@ -25,7 +25,6 @@ const PendingScreen = () => {
 
   const [pendingOrders, setPendingOrders] = useState([{}]);
   const [mergeSort, setMergeSort] = useState([]);
-  const [orderProvince, setOrderProvince] = useState('');
   const [modalMessage, setModalMessage] = useState('');
   const [showResultModal, setResultModal] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
@@ -87,12 +86,12 @@ const PendingScreen = () => {
     }
   };
 
+      
+
   const updateStatusRequest = async items => {
     let order_id = items.Order_id;
     let user_id = await AsyncStorage.getItem('user_id');
-    const body = {
-      user_id,
-    };
+    const body={user_id}
     try {
       setLoading(true);
       const result = await axios.post(

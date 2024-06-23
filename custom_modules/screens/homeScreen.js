@@ -58,6 +58,7 @@ const HomeScreen = () => {
     navigation.navigate('PerformanceScreen');
   };
 
+
   return (
     <View style={{width: window.width, height: window.height}}>
       <View style={HomeStyles.topView}>

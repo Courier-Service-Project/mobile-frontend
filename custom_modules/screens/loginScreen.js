@@ -50,9 +50,7 @@ const Login = () => {
 
     try {
       const result = await axios.post(
-
         'http://10.10.27.131:9000/api/mobile/users/login',
-
         userdata,
       );
       const {success, message,token} = result.data;
