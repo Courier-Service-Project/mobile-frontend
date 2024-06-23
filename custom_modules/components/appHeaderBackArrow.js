@@ -4,6 +4,7 @@ import backArrow from '../icons/backArrow.png';
 import {useNavigation} from '@react-navigation/native';
 
 const AppHeaderBackArrow = props => {
+  console.log('back button pressed')
   const navigation = useNavigation();
   console.log(props.prevScreen);
   const navigationScreen = () => {

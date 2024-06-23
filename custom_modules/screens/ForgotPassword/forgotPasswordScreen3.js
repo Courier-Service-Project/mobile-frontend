@@ -66,7 +66,7 @@ const ForgotPasswordScreen3 = () => {
           try {
             const result = await axios.patch(
 
-              'http://192.168.43.137:9000/api/mobile/users/resetForgotPassword',
+              'http://10.10.27.131:9000/api/mobile/users/resetForgotPassword',
 
               body,
             );

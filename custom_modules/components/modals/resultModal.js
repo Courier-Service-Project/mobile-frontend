@@ -89,7 +89,46 @@ const ResultModalSuccessNavigation = props => {
   );
 };
 
-export {ResultModal, ResultModalSuccessNavigation, ResultModalSuccess};
+const QuestionModal = props => {
+  return (
+    <Modal transparent={true} visible={props.show} animationType="fade">
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+        }}>
+        <View style={style.modalContainer}>
+          <View>
+            <Text style={style.subText}>{props.message}</Text>
+          </View>
+          <View style={{flexDirection:'row',justifyContent:'space-between'}}>
+            <TouchableOpacity
+              style={[style.button,{width:120,marginRight:15}]}
+              //onPress={()=>{console.log('im clicked!!!')}}
+              onPress={()=>{props.function(props.order_id)}}
+              >
+              <Text style={style.textButton}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[style.button,{width:120}]}
+              onPress={() => props.cancelFunction()}
+              >
+              <Text style={style.textButton}>No</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+};
+export {
+  ResultModal,
+  ResultModalSuccessNavigation,
+  ResultModalSuccess,
+  QuestionModal,
+};
 
 const style = StyleSheet.create({
   modalContainer: {

@@ -41,7 +41,7 @@ const OrderDetailsScreen = ({route}) => {
   const getOrderDetails = async () => {
     try {
       const result = await axios.get(
-        `http://10.10.12.53:9000/api/mobile/orders/getOrderDetails/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/getOrderDetails/${order_id}`,
       );
       setOrderDetails(result.data.message[0]);
     } catch (error) {
@@ -54,7 +54,7 @@ const OrderDetailsScreen = ({route}) => {
       <View>
         <AppHeaderBackArrow prevScreen={'BottomTabNavigator'} />
       </View>
-      <ScrollView>
+      <ScrollView style={{marginBottom:50}}>
         <View>
           <OrderIdView order_id={order_id} />
         </View>
@@ -70,9 +70,12 @@ const OrderDetailsScreen = ({route}) => {
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.titleText}>Name</Text>
                   </View>
-                  <View style={{flex: 1}}>
+                  <View style={{flex: 1,flexDirection:'row'}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.FN} {orderDetails.LN}
+                      :- {orderDetails.FN}
+                    </Text>
+                    <Text style={[OrderStyles.valueText,{marginLeft:10}]}>
+                      {orderDetails.LN}
                     </Text>
                   </View>
                 </View>
@@ -82,13 +85,13 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flexDirection: 'column', flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.Pickup_StreetNo},
+                      :- {orderDetails.Pickup_StreetNo},
                     </Text>
-                    <Text style={OrderStyles.valueText}>
+                    <Text style={[OrderStyles.valueText,{marginLeft:15}]}>
                       {orderDetails.Pickup_Street},
                     </Text>
-                    <Text style={OrderStyles.valueText}>
-                      {orderDetails.Pickup_City}
+                    <Text style={[OrderStyles.valueText,{marginLeft:15}]}>
+                       {orderDetails.Pickup_City}
                     </Text>
                   </View>
                 </View>
@@ -98,7 +101,7 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.Pickup_District}
+                      :- {orderDetails.Pickup_District}
                     </Text>
                   </View>
                 </View>
@@ -108,7 +111,7 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.Pickup_City}
+                      :- {orderDetails.Pickup_City}
                     </Text>
                   </View>
                 </View>
@@ -117,7 +120,15 @@ const OrderDetailsScreen = ({route}) => {
                     <Text style={OrderStyles.titleText}>Contact No</Text>
                   </View>
                   <View style={{flex: 1}}>
-                    <Text style={OrderStyles.valueText}>{orderDetails.M}</Text>
+                    <Text style={OrderStyles.valueText}>:- {orderDetails.M}</Text>
+                  </View>
+                </View>
+                <View style={OrderStyles.insideTextView}>
+                  <View style={{flex: 1}}>
+                    <Text style={OrderStyles.titleText}>Order Place Date</Text>
+                  </View>
+                  <View style={{flex: 1}}>
+                    <Text style={OrderStyles.valueText}>:- {new Date(orderDetails.orderPlaceDate).toLocaleDateString()}</Text>
                   </View>
                 </View>
               </View>
@@ -135,9 +146,12 @@ const OrderDetailsScreen = ({route}) => {
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.titleText}>Name</Text>
                   </View>
-                  <View style={{flex: 1}}>
+                  <View style={{flex: 1,flexDirection:'row'}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.FirstName} {orderDetails.LastName}
+                      :- {orderDetails.FirstName}
+                    </Text>
+                    <Text style={[OrderStyles.valueText,{marginLeft:10}]}>
+                      {orderDetails.LastName}
                     </Text>
                   </View>
                 </View>
@@ -147,13 +161,13 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flexDirection: 'column', flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.StreetNo},
+                    :- {orderDetails.StreetNo},
                     </Text>
-                    <Text style={OrderStyles.valueText}>
-                      {orderDetails.Street},
+                    <Text style={[OrderStyles.valueText,{marginLeft:15}]}>
+                    {orderDetails.Street},
                     </Text>
-                    <Text style={OrderStyles.valueText}>
-                      {orderDetails.City}
+                    <Text style={[OrderStyles.valueText,{marginLeft:15}]}>
+                       {orderDetails.City}
                     </Text>
                   </View>
                 </View>
@@ -163,7 +177,7 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.DiliveryDistrict}
+                    :- {orderDetails.DiliveryDistrict}
                     </Text>
                   </View>
                 </View>
@@ -173,7 +187,7 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.City}
+                    :- {orderDetails.City}
                     </Text>
                   </View>
                 </View>
@@ -183,7 +197,7 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                      {orderDetails.mobile}
+                    :- {orderDetails.mobile}
                     </Text>
                   </View>
                 </View>

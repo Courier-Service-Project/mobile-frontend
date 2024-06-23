@@ -82,7 +82,7 @@ const ForgotPasswordScreen1 = () => {
       try {
         const results = await axios.post(
 
-          'http://192.168.43.137:9000/api/mobile/users/verifyEmail',
+          'http://10.10.27.131:9000/api/mobile/users/verifyEmail',
 
           body,
         );

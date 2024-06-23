@@ -69,7 +69,7 @@ const ForgotPasswordScreen2 = () => {
     try {
       const result = await axios.post(
 
-        'http://192.168.43.137:9000/api/mobile/users/resendOtp',
+        'http://10.10.27.131:9000/api/mobile/users/resendOtp',
 
         {email},
       );

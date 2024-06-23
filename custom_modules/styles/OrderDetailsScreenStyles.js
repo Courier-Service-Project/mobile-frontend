@@ -11,7 +11,7 @@ const OrderStyles = StyleSheet.create({
     borderColor: '#B9DADA',
     backgroundColor: '#fff',
     width: '100%',
-    height: 200,
+    height: 250,
     borderRadius: 20,
     justifyContent: 'space-around',
     shadowColor: '#20DED2',

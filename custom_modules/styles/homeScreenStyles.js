@@ -4,57 +4,69 @@ const HomeStyles = StyleSheet.create({
   topView: {
     backgroundColor: '#128F87',
     //flex: 1,
-    height: 328,
-    borderBottomLeftRadius: 40,
-    borderBottomRightRadius: 40,
+    height: '33%',
+    borderBottomLeftRadius: 20,
+    borderBottomRightRadius: 20,
   },
-
+  imageView:{
+    backgroundColor:'#fff',
+    width:120,
+    height:120,
+    borderRadius:60,
+    alignSelf: 'center',
+    marginTop:10
+  },
   bottomView: {
     borderRadius: 30,
     marginBottom: 50,
+    marginTop:60
   },
   helloText: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: 30,
-    marginLeft: 25,
-    marginTop: 30,
+    fontSize: 20,
+    alignSelf: 'center',
+    marginTop:10
   },
   welcomeText: {
     color: '#fff',
     fontWeight: '700',
     fontSize: 30,
-    alignSelf: 'flex-end',
-    marginRight: 30,
-    marginTop: 8,
+    alignSelf: 'center',
+    marginTop:10,
+  },
+  topCard:{
+    position:'absolute', //to overlap
+    flexDirection:'row',
+    width: '85%',
+    height: '8%',
+    backgroundColor: '#fff',
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#12ABA2',
+    elevation: 10,
+    //margin:10,
+    marginTop:250,
+    alignSelf:'center',
+    padding:20
   },
   homeImage: {
-    width: '80%',
-    //height: 150,
-    borderRadius: 100,
-    alignSelf: 'center',
-    marginTop: 15,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
   },
-  topCardView: {
-    backgroundColor: '#187477',
-    width: '90%',
-    height: '30%',
-    alignSelf: 'center',
-    borderRadius: 30,
-    marginTop: 15,
-    shadowColor: '#000',
-    elevation: 10,
-  },
-  topcardInsideView:{
-    flex:1,
-    flexDirection:'row',
-    flexWrap:'wrap',
-    justifyContent:'space-around',
-    alignItems:'center'
-  },
+ 
+  // topcardInsideView:{
+  //   flex:1,
+  //   flexDirection:'row',
+  //   flexWrap:'wrap',
+  //   justifyContent:'space-around',
+  //   alignItems:'center'
+  // },
   card: {
-    width: 160,
-    height: 160,
+    width: '40%',
+    height: '60%',
     backgroundColor: '#fff',
     borderRadius: 30,
     alignItems: 'center',
@@ -69,17 +81,17 @@ const HomeStyles = StyleSheet.create({
     color: '#044B55',
   },
   earnText:{
-    fontSize:30,
+    fontSize:20,
     color:'#044B55'
   },
   earnView:{
-    width: '80%',
-    height: 150,
+   width: '45%',
+    height: 100,
     backgroundColor: '#fff',
-    borderRadius: 30,
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 12,
+    //margin: 2,
     shadowColor: '#12ABA2',
     elevation: 10,
     flexDirection:'row'
