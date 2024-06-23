@@ -51,11 +51,9 @@ const Login = () => {
     try {
       const result = await axios.post(
         'http://10.10.27.131:9000/api/mobile/users/login',
-
         userdata,
       );
       const {success, message,token} = result.data;
-      console.log(token);
       if (success == 200) {
         AsyncStorage.setItem('token', token);
         AsyncStorage.setItem('userName', message[0].FirstName);
@@ -71,7 +69,7 @@ const Login = () => {
         }
       } else if (success == 101) {
         setResultModal(true);
-        setModalMessage('Invalid Email');
+        setModalMessage('Invalid Credentials');
         setName('');
         setPassword('');
       }

@@ -18,7 +18,6 @@ import {
 
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 
-
 const PendingScreen = () => {
   const window = useWindowDimensions();
   const navigation = useNavigation();
@@ -30,7 +29,7 @@ const PendingScreen = () => {
   const [showResultModal, setResultModal] = useState(false);
   const [showSuccessModal, setSuccessModal] = useState(false);
   const [isLoading, setLoading] = useState();
-  const [lastDiliveryProvince,setLastDiliveryProvince] = useState();
+  const [lastDiliveryProvince, setLastDiliveryProvince] = useState();
 
   const orderDetailsNavigation = order_id => {
     navigation.navigate('OrderDetailsScreen', {
@@ -39,13 +38,12 @@ const PendingScreen = () => {
     });
   };
 
-
-
   useEffect(() => {
     if (isFocoused) {
+      console.log('in the pending tab');
       sendRequest();
     }
-  },[isFocoused]);
+  }, [isFocoused]);
 
   //in here  sortingList() will active once the pendingOrder list formed.
   //state initialization is asynchronous
@@ -60,46 +58,56 @@ const PendingScreen = () => {
 
   //in here it will only get the items with the same province
 
-  const AcceptOrder = async (items) => {
-    console.log(lastDiliveryProvince)
-    if (lastDiliveryProvince === "NPS") {
+  const AcceptOrder = async items => {
+    console.log(lastDiliveryProvince);
+    if (lastDiliveryProvince === 'NPS') {
       await AsyncStorage.removeItem('lastDiliveryProvince');
-      await AsyncStorage.setItem('lastDiliveryProvince',items.DiliveryProvince)
+      await AsyncStorage.setItem(
+        'lastDiliveryProvince',
+        items.DiliveryProvince,
+      );
       setLastDiliveryProvince(items.DiliveryProvince);
-      await updateStatusRequest(items);
-      setModalMessage('Order added successfully');
-      setSuccessModal(true);
-      await sendRequest();
+      updateStatusRequest(items);
+      //setModalMessage('Order added successfully');
+      //setSuccessModal(true);
+      //sendRequest();
     } else if (items.DiliveryProvince == lastDiliveryProvince) {
-      await updateStatusRequest(items);
-      setModalMessage('Order added successfully');
-      setSuccessModal(true);
-      await sendRequest();
-    } else {
+      updateStatusRequest(items);
+      //setModalMessage('Order added successfully');
+      //setSuccessModal(true);
+      //sendRequest();
+    } else if(items.DiliveryProvince=='CSP'){
+      setModalMessage('Cannot select orders.Some Orders Are Ongoing Or Verifying');
+      setResultModal(true);
+    }
+    else {
       setModalMessage('Orders must be in same Province');
       setResultModal(true);
-      
     }
   };
+
+      
 
   const updateStatusRequest = async items => {
     let order_id = items.Order_id;
     let user_id = await AsyncStorage.getItem('user_id');
+    const body={user_id}
     try {
       setLoading(true);
       const result = await axios.post(
-        `http://10.10.27.131:9000/api/mobile/orders/updatePendingState/${order_id}/${user_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/updatePendingState/${order_id}`,
+        body,
       );
       // if (isFocoused) {
       //   await sendRequest();
       // }
       if(result.data.success==200){
-        setLoading('false')
-      }else if(result.data.success==101){
-        setModalMessage(result.data.message);
-      showResultModal(true);
+        setLoading(false);
+        setModalMessage('Order added successfully');
+        setSuccessModal(true);
+        sendRequest();
       }
-      console.log(result.data.message);
+      console.log(result.data.message.affectedRows);
     } catch (error) {
       setModalMessage(error.message);
       showResultModal(true);
@@ -124,7 +132,9 @@ const PendingScreen = () => {
       );
       if (result.data.success == 200) {
         setPendingOrders(result.data.message);
-        setLastDiliveryProvince(await AsyncStorage.getItem('lastDiliveryProvince'))
+        setLastDiliveryProvince(
+          await AsyncStorage.getItem('lastDiliveryProvince'),
+        );
       } else if (result.data.success == 100) {
         setMergeSort([]);
         console.log('No orders found');
@@ -169,13 +179,31 @@ const PendingScreen = () => {
                 renderItem={({item}) => (
                   <View style={ActitvityStyles.LayoutContainer}>
                     <View style={ActitvityStyles.OrderDetailsContiner}>
-                      <View style={ActitvityStyles.OrderDeatailsMainRow}>
-                        <Text style={ActitvityStyles.OrderDetailsMainRowKey}>
-                          Order ID:
-                        </Text>
-                        <Text style={ActitvityStyles.OrderDetailsMainValue}>
-                          {item.Order_id}
-                        </Text>
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: 'row',
+                          flexWrap: 'wrap',
+                          justifyContent: 'space-between',
+                          marginRight: 10,
+                        }}>
+                        <View style={ActitvityStyles.OrderDeatailsMainRow}>
+                          <Text style={ActitvityStyles.OrderDetailsMainRowKey}>
+                            Order ID:
+                          </Text>
+                          <Text style={ActitvityStyles.OrderDetailsMainValue}>
+                            {item.Order_id}
+                          </Text>
+                        </View>
+
+                        <View style={ActitvityStyles.OrderDeatailsMainRow}>
+                          <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                            Place Date:
+                          </Text>
+                          <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                            {new Date(item.orderPlaceDate).toLocaleDateString()}
+                          </Text>
+                        </View>
                       </View>
 
                       <View style={ActitvityStyles.OrderDeatailsRow}>
@@ -245,7 +273,11 @@ const PendingScreen = () => {
                   </View>
                 )}
               />
-            ) : null}
+            ) : (
+              <Text style={{textAlign: 'center', marginTop: 20}}>
+                No pending orders are avilable
+              </Text>
+            )}
           </View>
         </ScrollView>
       )}

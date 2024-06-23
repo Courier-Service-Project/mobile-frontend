@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, useWindowDimensions, ScrollView} from 'react-native';
+import {View, Text, useWindowDimensions, ScrollView, ActivityIndicator} from 'react-native';
 import CalculatePrice from '../../styles/CalculatePriceStyles';
 import OrderIdView from '../../components/OrderDetails/OrderIdView';
 import BackendProcessButton from '../../components/buttons';
@@ -20,6 +20,7 @@ const CalculatePriceScreen2 = ({route}) => {
   const [modalMessage, setModalMessage] = useState();
   const [totalCost, setTotalCost] = useState();
   const [weightCost, setWeightCost] = useState();
+ 
 
   const screenNavigation = () => {
     setNavigationModal(false);
@@ -37,7 +38,7 @@ const CalculatePriceScreen2 = ({route}) => {
   const getOrderPriceDetails = async () => {
     try {
       const result = await axios.get(
-        `http://192.168.43.137:9000/api/mobile/orders/getPriceDetails/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/getPriceDetails/${order_id}`,
       );
       if (result.data.success == 200) {
         setDistanceCost(result.data.message[0].Distance_Cost);

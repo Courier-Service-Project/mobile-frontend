@@ -6,6 +6,7 @@ import {
   ScrollView,
   TextInput,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import CalculatePrice from '../../styles/CalculatePriceStyles';
 import OrderIdView from '../../components/OrderDetails/OrderIdView';
@@ -27,6 +28,7 @@ const CalculatePriceScreen1 = ({route}) => {
   const [errorModal, setErrorModal] = useState(false);
   const [navigationModal, setNavigationModal] = useState(false);
   const [modalMessage, setModalMessage] = useState();
+  const [isLoading,setIsLoading]=useState(false);
 
   const {order_id} = route.params;
 
@@ -37,7 +39,7 @@ const CalculatePriceScreen1 = ({route}) => {
   const sendRequest = async () => {
     try {
       const result = await axios.get(
-        `http://192.168.43.137:9000/api/mobile/orders/getOrderTypeCost/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/getOrderTypeCost/${order_id}`,
       );
       setEmmergency(result.data.message[0].Emmergency);
       setDistanceCost(result.data.message[0].Distance_Cost);
@@ -52,27 +54,33 @@ const CalculatePriceScreen1 = ({route}) => {
 
   const updateTotalPrice = async weight => {
     const weightCost = weightPrice(weight);
+    setIsLoading(true);
     try {
       const body = {
         weightCost,
+        weight
       };
       const result = await axios.patch(
-        `http://192.168.43.137:9000/api/mobile/orders/updateWeightCost/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/updateWeightCost/${order_id}`,
         body,
       );
       if (result.data.success == 200) {
         setModalMessage(result.data.message);
         setNavigationModal(true);
+        setIsLoading(false);
       } else if (result.data.success == 101) {
         setModalMessage(result.data.message);
         setErrorModal(true);
+        setIsLoading(false);
       } else {
         setModalMessage(result.data.message);
         setErrorModal(true);
+        setIsLoading(false);
       }
     } catch (error) {
       setModalMessage(error.message);
       setErrorModal(true);
+      setIsLoading(false);
     }
   };
 
@@ -117,6 +125,9 @@ const CalculatePriceScreen1 = ({route}) => {
           function={setErrorModal}
         />
       </View>
+      {isLoading?(<View>
+        <ActivityIndicator size="large"/>
+      </View>):(
       <ScrollView>
         <View>
           <OrderIdView order_id={order_id} />
@@ -181,7 +192,7 @@ const CalculatePriceScreen1 = ({route}) => {
             </View>
           </View>
         </View>
-      </ScrollView>
+      </ScrollView>)}
     </View>
   );
 };

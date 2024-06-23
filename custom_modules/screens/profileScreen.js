@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -10,18 +10,20 @@ import {
 import {AppHeader} from '../components/appHeader';
 import ProfileStyles from '../styles/ProfileScreenStyles';
 import BackendProcessButton from '../components/buttons';
-import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import ImagePicker from 'react-native-image-crop-picker';
 import imagePlaceHolder from '../icons/addPhoto.png';
 import Modal from 'react-native-modal';
 import {ResultModalSuccess} from '../components/modals/resultModal';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const ProfileScreen = () => {
   const [profile, setProfile] = useState(null);
@@ -30,8 +32,11 @@ const ProfileScreen = () => {
   const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
     useState(false);
   const [updateSuccessVisible, setUpdateSuccessVisible] = useState(false);
-
+  const [userData, setUserData] = useState({});
   const navigation = useNavigation();
+  const window = useWindowDimensions();
+  const isFocousedProfile=useIsFocused()
+
   const navigationLogin = () => {
     navigation.navigate('Login');
   };
@@ -45,7 +50,7 @@ const ProfileScreen = () => {
     }).then(image => {
       console.log(image);
       setProfile(image.path);
-      setProfilePic(ProfileStyles.profileImage); //set the profile pic styles after selecting image
+      setProfilePic(ProfileStyles.profileImage); // Set the profile pic styles after selecting image
       setUpdateSuccessVisible(true);
     });
   };
@@ -65,7 +70,48 @@ const ProfileScreen = () => {
     setIsModalVisible(!isModalVisible);
   };
 
-  const window = useWindowDimensions();
+  useEffect(() => {
+    if(isFocousedProfile){
+      console.log("im inside use effect");
+    getProfileDetails();
+    }
+    
+  }, [isFocousedProfile]);
+
+  const getProfileDetails = async () => {
+    try {
+      const user_id = await AsyncStorage.getItem('user_id');
+      const result = await axios.get(
+        `http://10.10.27.131:9000/api/mobile/users/getProfileDetails/${user_id}`,
+      );
+      console.log(result.data.message[0]);
+      setUserData(result.data.message[0]);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+
+
+  const changeNameNavigation=()=>{
+    navigation.navigate('ChangeNameScreen')
+  }
+
+  const ChangeEmailNavigation=()=>{
+    navigation.navigate('ChangeEmailScreen')
+  }
+
+  const ChangeMobileNavigation=()=>{
+    navigation.navigate('ChangeMobileScreen')
+  }
+
+  const ChangeDOBNavigation =()=>{
+    navigation.navigate('ChangeDOBScreen')
+  }
+
+  const ChangeGenderNavigation =()=>{
+    navigation.navigate('ChangeGenderScreen')
+  }
 
   return (
     <View style={{width: window.width, height: window.height}}>
@@ -137,13 +183,13 @@ const ProfileScreen = () => {
             <View style={ProfileStyles.insidetextView}>
               <View>
                 <Text style={ProfileStyles.titleText}>Full Name</Text>
-                <View>
+                <View style={{flex: 1, flexDirection: 'row', flexWrap: 'wrap'}}>
                   <Text style={ProfileStyles.valueText}>
-                    Pramuditha Sadeepa
+                    {userData.FirstName} {userData.LastName}
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>{changeNameNavigation()}}>
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}
@@ -164,12 +210,10 @@ const ProfileScreen = () => {
               <View>
                 <Text style={ProfileStyles.titleText}>Email</Text>
                 <View>
-                  <Text style={ProfileStyles.valueText}>
-                    mlpramuditha1@gmail.com
-                  </Text>
+                  <Text style={ProfileStyles.valueText}>{userData.Email}</Text>
                 </View>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>{ChangeEmailNavigation()}}>
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}
@@ -194,10 +238,10 @@ const ProfileScreen = () => {
               <View>
                 <Text style={ProfileStyles.titleText}>Mobile Number</Text>
                 <View>
-                  <Text style={ProfileStyles.valueText}>0766022718</Text>
+                  <Text style={ProfileStyles.valueText}>{userData.Mobile}</Text>
                 </View>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>{ChangeMobileNavigation()}}>
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}
@@ -222,10 +266,12 @@ const ProfileScreen = () => {
               <View>
                 <Text style={ProfileStyles.titleText}>Birthday</Text>
                 <View>
-                  <Text style={ProfileStyles.valueText}>15 Nov 1999</Text>
+                  <Text style={ProfileStyles.valueText}>
+                    {`${new Date(userData.DOB).getFullYear().toString()}-${(new Date(userData.DOB).getMonth()+1).toString()}-${new Date(userData.DOB).getDate().toString()}`}
+                  </Text>
                 </View>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>{ChangeDOBNavigation()}} >
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}
@@ -246,10 +292,10 @@ const ProfileScreen = () => {
               <View>
                 <Text style={ProfileStyles.titleText}>Gender</Text>
                 <View>
-                  <Text style={ProfileStyles.valueText}>Male</Text>
+                  <Text style={ProfileStyles.valueText}>{userData.Gender}</Text>
                 </View>
               </View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={ChangeGenderNavigation}>
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}

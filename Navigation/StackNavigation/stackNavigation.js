@@ -11,13 +11,19 @@ import OrderDetailsScreen from '../../custom_modules/screens/OrderDetailsScreen'
 import StatusUpdateScreen from '../../custom_modules/screens/StatusUpdateScreen';
 import CalculatePriceScreen1 from '../../custom_modules/screens/calculatePrice/CalculatePriceScreen1';
 import CalculatePriceScreen2 from '../../custom_modules/screens/calculatePrice/CalculatePriceScreen2';
+import ChangeNameScreen from '../../custom_modules/screens/profile/changeNameScreen';
+import ChangeEmailScreen from '../../custom_modules/screens/profile/changeEmailScreen';
+import ChangeMobileScreen from '../../custom_modules/screens/profile/changeMobileScreen';
+import ChangeDOBScreen from '../../custom_modules/screens/profile/changeDOB';
+import ChangeGenderScreen from '../../custom_modules/screens/profile/changeGenderScreen';
+import PerformanceScreen from '../../custom_modules/screens/performanceScreen';
 
 const stack = createNativeStackNavigator();
 const StackNavigation = () => {
   return (
     <stack.Navigator
       screenOptions={{headerShown: false}}
-      initialRouteName="BottomTabNavigator">
+      initialRouteName="Login">
       <stack.Screen name="Login" component={Login}></stack.Screen>
       <stack.Screen
         name="ResetPassword"
@@ -51,6 +57,30 @@ const StackNavigation = () => {
       <stack.Screen
         name="CalculatePriceScreen2"
         component={CalculatePriceScreen2}></stack.Screen>
+
+      <stack.Screen
+        name="ChangeNameScreen"
+        component={ChangeNameScreen}></stack.Screen>
+
+      <stack.Screen
+        name="ChangeEmailScreen"
+        component={ChangeEmailScreen}></stack.Screen>
+
+      <stack.Screen
+        name="ChangeMobileScreen"
+        component={ChangeMobileScreen}></stack.Screen>
+
+      <stack.Screen
+        name="ChangeDOBScreen"
+        component={ChangeDOBScreen}></stack.Screen>
+
+      <stack.Screen
+        name="ChangeGenderScreen"
+        component={ChangeGenderScreen}></stack.Screen>
+
+<stack.Screen
+        name="PerformanceScreen"
+        component={PerformanceScreen}></stack.Screen>
     </stack.Navigator>
   );
 };
