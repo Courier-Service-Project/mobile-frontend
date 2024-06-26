@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   Image,
   Text,
   TouchableOpacity,
@@ -16,7 +17,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import { ResultModal } from '../components/modals/resultModal';
+import {ResultModal} from '../components/modals/resultModal';
 
 
 const HomeScreen = () => {
@@ -24,33 +25,45 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [orderStatusCount, setOrderStatusCount] = useState([]);
-  const [modalMessage,setModalMessage]=useState()
-  const [resultModal,setResultModal]=useState(false);
-
+  const [modalMessage, setModalMessage] = useState();
+  const [resultModal, setResultModal] = useState(false);
+  const [isLoading,setIsLoading]=useState(false);
+  const [userName,setUserName]=useState();
   useEffect(() => {
     if (isFocused) {
+      setIsLoading(true);
       getOrderStateCounts();
     }
   }, [isFocused]);
 
   const getOrderStateCounts = async () => {
+    setUserName(await AsyncStorage.getItem('userName'))
     const user_id = await AsyncStorage.getItem('user_id');
     const branchLocation = await AsyncStorage.getItem('branchLocation');
     try {
       const result = await axios.get(
         `http://10.10.27.131:9000/api/mobile/orders/getOrderStateCount/${user_id}/${branchLocation}`,
       );
-      setOrderStatusCount(result.data.message);
       console.log(result.data.message);
-      console.log(result.data.message[4][0].DiliveryProvince);
-      AsyncStorage.setItem(
-        'lastDiliveryProvince',
-        result.data.message[4][0].DiliveryProvince,
-      );
+      if (result.data.success == 200) {
+        setOrderStatusCount(result.data.message);
+        console.log(result.data.message);
+        console.log(result.data.message[4][0].DiliveryProvince);
+        AsyncStorage.setItem(
+          'lastDiliveryProvince',
+          result.data.message[4][0].DiliveryProvince,
+        );
+        setIsLoading(false);
+      } else if (result.data.success == 0) {
+        setModalMessage(result.data.message);
+        setResultModal(true);
+        setIsLoading(false);
+      }
       //console.log(orderStatusCount[0][0].pendingCount)
     } catch (error) {
       setModalMessage(error.message);
       setResultModal(true);
+      setIsLoading(false);
     }
   };
 
@@ -58,38 +71,42 @@ const HomeScreen = () => {
     navigation.navigate('PerformanceScreen');
   };
 
-
   return (
     <View style={{width: window.width, height: window.height}}>
       <View style={HomeStyles.topView}>
         <View>
           <Text style={HomeStyles.welcomeText}>Welcome To XPress!</Text>
-          <Text style={HomeStyles.helloText}>Pramuditha Sadeepa</Text>
+          <Text style={HomeStyles.helloText}>{userName}</Text>
           <View style={HomeStyles.imageView}>
-            <Image source={HomeImage} style={HomeStyles.homeImage}/>
-            </View>
+            <Image source={HomeImage} style={HomeStyles.homeImage} />
+          </View>
         </View>
-        <View>
-              <ResultModal
-                show={resultModal}
-                function={setResultModal}
-                message={modalMessage}
-              />
-            </View>
       </View>
 
-      <TouchableOpacity style={HomeStyles.topCard} onPress={performanceScreenNavigation}>
-        <Text style={{fontSize: 18, color: '#044B55'}}>
-            Your Performances
-          </Text>
-          <View style={{marginTop: 5, marginLeft: 10}}>
-            <SimpleLineIcons name="arrow-right" color={'#20DED2'} size={16} />
-          </View>
-        
+      <TouchableOpacity
+        style={HomeStyles.topCard}
+        onPress={performanceScreenNavigation}>
+        <Text style={{fontSize: 18, color: '#044B55'}}>Your Performances</Text>
+        <View style={{marginTop: 5, marginLeft: 10}}>
+          <SimpleLineIcons name="arrow-right" color={'#20DED2'} size={16} />
+        </View>
       </TouchableOpacity>
 
+      <View>
+        <ResultModal
+          show={resultModal}
+          function={setResultModal}
+          message={modalMessage}
+        />
+      </View>
+
+      {isLoading ?(
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <ActivityIndicator size={40} />
+      <Text style={{color: '#0A4851', fontSize: 14}}>Loading...</Text>
+    </View>):(
       <ScrollView>
-        {orderStatusCount.length>0 && (
+        {orderStatusCount.length > 0 && (
           <View style={HomeStyles.bottomView}>
             <ScrollView style={{marginBottom: 50}}>
               {/* set bottom card view */}
@@ -146,7 +163,7 @@ const HomeScreen = () => {
             </ScrollView>
           </View>
         )}
-      </ScrollView>
+      </ScrollView>)}
     </View>
   );
 };

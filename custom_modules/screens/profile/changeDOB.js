@@ -18,8 +18,6 @@ const ChangeDOBScreen = () => {
     setShow(Platform.OS === 'ios');
     setDate(currentDate);
 
-    
-
     try {
       const dob={
         currentDate  

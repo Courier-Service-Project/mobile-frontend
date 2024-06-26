@@ -80,14 +80,17 @@ const ForgotPasswordScreen1 = () => {
       setShow(true);
       try {
         const results = await axios.post(
-
           'http://10.10.27.131:9000/api/mobile/users/verifyEmail',
-
           body,
         );
         if (results.data.success == 200) {
           successProcess(results);
         } else if (results.data.success == 101) {
+          setModalMessage(results.data.message);
+          setShowModal(true);
+          setShow(false);
+        }
+        else{
           setModalMessage(results.data.message);
           setShowModal(true);
           setShow(false);

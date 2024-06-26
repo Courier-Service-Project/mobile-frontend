@@ -29,6 +29,7 @@ const OngoingOrderScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation();
   const [mergeSort, setMergeSort] = useState([]);
+  const [userId, setUserId] = useState(null);
   const window = Dimensions.get('window');
 
   useEffect(() => {
@@ -58,7 +59,7 @@ const OngoingOrderScreen = () => {
   };
 
   const getOnDeliveryOrders = async () => {
-    const userId=await AsyncStorage.getItem('user_id');
+    const userId = await AsyncStorage.getItem('user_id');
     try {
       const result = await axios.get(
         `http://10.10.27.131:9000/api/mobile/orders/getOnDiliveryOrders/${userId}`,
@@ -67,13 +68,19 @@ const OngoingOrderScreen = () => {
       if (result.data.success == 200) {
         console.log(result.data.message);
         setOngoingOrders(result.data.message);
+      } else if (result.data.success == 101) {
+        setMergeSort([]);
       } else {
-        setMergeSort([])
-        console.log(result.data.message);
+        setMergeSort([]);
+        setModalMessage(result.data.message);
+        //setModalMessage(result.data.message);
+        setshowErrorModal(true);
       }
     } catch (error) {
       console.log(error.message);
-      setError(error.message);
+      setModalMessage(result.data.message);
+      //setModalMessage(result.data.message);
+      setshowErrorModal(true);
     }
   };
 
@@ -100,10 +107,10 @@ const OngoingOrderScreen = () => {
 
   const updateOnDiliveryState = async order_id => {
     setIsLoading(true);
-    console.log('im inside the function');
+    const userId = await AsyncStorage.getItem('user_id');
     try {
       const result = await axios.patch(
-        `http://10.10.27.131:9000/api/mobile/orders/updateOnDiliveryState/${order_id}`,
+        `http://10.10.27.131:9000/api/mobile/orders/updateOnDiliveryState/${order_id}/${userId}`,
       );
       if (result.data.success == 200) {
         console.log(result.data);
@@ -112,17 +119,19 @@ const OngoingOrderScreen = () => {
         getOnDeliveryOrders();
         setIsLoading(false);
       } else if (result.data.success == 101) {
+        setModalMessage(result.data.message);
         //setModalMessage(result.data.message);
         setshowErrorModal(true);
         setIsLoading(false);
       } else {
+        setModalMessage(result.data.message);
         //setModalMessage(result.data.message);
         setshowErrorModal(true);
         setIsLoading(false);
       }
     } catch (error) {
       console.log(error.message);
-      setshowErrorModal(true);;
+      setshowErrorModal(true);
       setIsLoading(false);
     }
   };
@@ -152,8 +161,8 @@ const OngoingOrderScreen = () => {
 
         <ResultModal
           show={showErrorModal}
-          message={'Order Not Completed Successfully'}
-          function={setshowErrorModal} 
+          message={modalMessage}
+          function={setshowErrorModal}
         />
       </View>
 
@@ -166,63 +175,101 @@ const OngoingOrderScreen = () => {
           renderItem={({item}) => (
             <View style={ActitvityStyles.LayoutContainer}>
               <View style={ActitvityStyles.OrderDetailsContiner}>
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-between',
+                    marginRight: 10,
+                  }}>
+                  <View style={ActitvityStyles.OrderDeatailsMainRow}>
+                    <Text style={ActitvityStyles.OrderDetailsMainRowKey}>
+                      Order ID
+                    </Text>
+                    <Text style={ActitvityStyles.OrderDetailsMainValue}>
+                      : {item.Order_id}
+                    </Text>
+                  </View>
 
-                 <View style={{flex:1,flexDirection:'row',flexWrap:'wrap',justifyContent:'space-between',marginRight:10}}>
-                <View style={ActitvityStyles.OrderDeatailsMainRow}>
-                  <Text style={ActitvityStyles.OrderDetailsMainRowKey}>
-                    Order ID:
-                  </Text>
-                  <Text style={ActitvityStyles.OrderDetailsMainValue}>
-                    {item.Order_id}
-                  </Text>
-                </View>
-
-                <View style={ActitvityStyles.OrderDeatailsMainRow}>
-                  <Text style={ActitvityStyles.OrderDetailsRowKey}>
-                    Pickup Date:
-                  </Text>
-                  <Text style={ActitvityStyles.OrderDetailsRowKey}>
-                    {new Date(item.pickup_Date).toLocaleDateString()}
-                  </Text>
-                </View>
-
+                  <View style={ActitvityStyles.OrderDeatailsMainRow}>
+                    <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                      Pickup Date
+                    </Text>
+                    <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                      : {new Date(item.pickup_Date).toLocaleDateString()}
+                    </Text>
+                  </View>
                 </View>
 
                 <View style={ActitvityStyles.OrderDeatailsRow}>
-                  <Text style={ActitvityStyles.OrderDetailsRowKey}>
-                    Order Type:
-                  </Text>
-                  {item.Emmergency === 'T' ? (
-                    <Text
-                      style={[
-                        ActitvityStyles.OrderDetailsRowValue,
-                        {color: 'red'},
-                      ]}>
-                      Emmergency
+                  <View style={{flex: 1, flexDirection: 'row'}}>
+                    <View style={{flex: 6}}>
+                      <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                        Order Type
+                      </Text>
+                    </View>
+                    <View style={{flex: 9}}>
+                      {item.Emmergency === 'T' ? (
+                        <Text
+                          style={[
+                            ActitvityStyles.OrderDetailsRowValue,
+                            {color: 'red'},
+                          ]}>
+                          : Emmergency
+                        </Text>
+                      ) : (
+                        <Text style={ActitvityStyles.OrderDetailsRowValue}>
+                          : Normal Order
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+
+                <View style={ActitvityStyles.OrderDeatailsRow}>
+                  <View style={{flex: 1, flexDirection: 'row'}}>
+                    <View style={{flex: 6}}>
+                      <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                        Pickup District
+                      </Text>
+                    </View>
+                    <View style={{flex: 9}}>
+                      <Text style={ActitvityStyles.OrderDetailsRowValue}>
+                        : {item.Pickup_District}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={ActitvityStyles.OrderDeatailsRow}>
+                  <View style={{flex: 1, flexDirection: 'row'}}>
+                    <View style={{flex: 6}}>
+                      <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                        Delivery District
+                      </Text>
+                    </View>
+                    <View style={{flex: 9}}>
+                      <Text style={ActitvityStyles.OrderDetailsRowValue}>
+                        : {item.DiliveryDistrict}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              <View style={ActitvityStyles.OrderDeatailsRow}>
+                <View style={{flex: 1, flexDirection: 'row'}}>
+                  <View style={{flex: 6}}>
+                    <Text style={ActitvityStyles.OrderDetailsRowKey}>
+                      Dilivery Province
                     </Text>
-                  ) : (
+                  </View>
+                  <View style={{flex: 9}}>
                     <Text style={ActitvityStyles.OrderDetailsRowValue}>
-                      Normal Order
+                      : {item.DiliveryProvince}
                     </Text>
-                  )}
-                </View>
-
-                <View style={ActitvityStyles.OrderDeatailsRow}>
-                  <Text style={ActitvityStyles.OrderDetailsRowKey}>
-                    Pickup District:
-                  </Text>
-                  <Text style={ActitvityStyles.OrderDetailsRowValue}>
-                    {item.Pickup_District}
-                  </Text>
-                </View>
-
-                <View style={ActitvityStyles.OrderDeatailsRow}>
-                  <Text style={ActitvityStyles.OrderDetailsRowKey}>
-                    Delivery District:
-                  </Text>
-                  <Text style={ActitvityStyles.OrderDetailsRowValue}>
-                    {item.DiliveryDistrict}
-                  </Text>
+                  </View>
                 </View>
               </View>
 

@@ -65,7 +65,6 @@ const ForgotPasswordScreen3 = () => {
           };
           try {
             const result = await axios.patch(
-
               'http://10.10.27.131:9000/api/mobile/users/resetForgotPassword',
 
               body,
@@ -73,6 +72,12 @@ const ForgotPasswordScreen3 = () => {
             if (result.data.success == 200) {
               deleteAsyncStorage();
               setShowModal(true);
+            } else if (result.data.success == 101) {
+              setModalMessage(result.data.message);
+              setResultModal(true);
+            } else {
+              setModalMessage(result.data.message);
+              setResultModal(true);
             }
           } catch (error) {
             setModalMessage(error.message);
@@ -87,7 +92,7 @@ const ForgotPasswordScreen3 = () => {
   };
 
   return (
-    <View style={{flex: 1, width: window.width,height:window.height}}>
+    <View style={{flex: 1, width: window.width, height: window.height}}>
       <View>
         <AppHeaderBackArrow prevScreen={'ForgotPasswordScreen2'} />
       </View>
@@ -100,10 +105,13 @@ const ForgotPasswordScreen3 = () => {
         <View style={passwordResetStyles.screenTop}>
           <Text style={passwordResetStyles.textTop}>Reset Password</Text>
 
-        <View style={{marginTop:30,alignItems:'center'}}>
-          <Image source={passwordLock}style={passwordResetStyles.topImageView} />
-        </View>
-        
+          <View style={{marginTop: 30, alignItems: 'center'}}>
+            <Image
+              source={passwordLock}
+              style={passwordResetStyles.topImageView}
+            />
+          </View>
+
           <View style={[passwordResetStyles.textSubTopicContainer]}>
             <Text style={passwordResetStyles.textSubTopic}>
               Enter New Password
@@ -148,7 +156,11 @@ const ForgotPasswordScreen3 = () => {
             </View>
           </View>
         </Modal>
-        <View style={[passwordResetStyles.screenMiddle, {marginTop: 50,marginBottom:50}]}>
+        <View
+          style={[
+            passwordResetStyles.screenMiddle,
+            {marginTop: 50, marginBottom: 50},
+          ]}>
           <View style={textInputs.textInputFeildContainer}>
             <TouchableOpacity onPress={() => setInputErrorMessage('')}>
               <View style={{flexDirection: 'column', flexWrap: 'wrap'}}>
