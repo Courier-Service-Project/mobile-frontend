@@ -41,8 +41,17 @@ const CalculatePriceScreen1 = ({route}) => {
       const result = await axios.get(
         `http://10.10.27.131:9000/api/mobile/orders/getOrderTypeCost/${order_id}`,
       );
-      setEmmergency(result.data.message[0].Emmergency);
-      setDistanceCost(result.data.message[0].Distance_Cost);
+      if(result.data.success==200){
+        setEmmergency(result.data.message[0].Emmergency);
+        setDistanceCost(result.data.message[0].Distance_Cost);
+      }else if(result.data.success==101){
+        setModalMessage(result.data.message);
+        setErrorModal(true)
+      }else{
+        setModalMessage(result.data.message);
+        setErrorModal(true)
+      }
+      
     } catch (error) {
       console.log(error.message);
     }
@@ -125,8 +134,9 @@ const CalculatePriceScreen1 = ({route}) => {
           function={setErrorModal}
         />
       </View>
-      {isLoading?(<View>
-        <ActivityIndicator size="large"/>
+      {isLoading?(<View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+        <ActivityIndicator size={70} />
+        <Text style={{color:"#0A4851",fontSize:20}}>Loading...</Text>
       </View>):(
       <ScrollView>
         <View>

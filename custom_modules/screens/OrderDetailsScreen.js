@@ -6,6 +6,7 @@ import {ScrollView} from 'react-native-virtualized-view';
 import OrderIdView from '../components/OrderDetails/OrderIdView';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
+import {ResultModal} from '../components/modals/resultModal';
 
 const OrderDetailsScreen = ({route}) => {
   const window = useWindowDimensions();
@@ -15,6 +16,8 @@ const OrderDetailsScreen = ({route}) => {
 
   const [orderDetails, setOrderDetails] = useState();
   const [show, setShow] = useState(false);
+  const [modalMessage, setModalMessage] = useState(null);
+  const [resultModal, setResultModal] = useState(false);
   const [message, setMessage] = useState();
 
   //navigation for calculate price button
@@ -43,9 +46,18 @@ const OrderDetailsScreen = ({route}) => {
       const result = await axios.get(
         `http://10.10.27.131:9000/api/mobile/orders/getOrderDetails/${order_id}`,
       );
-      setOrderDetails(result.data.message[0]);
+      if (result.data.success == 200) {
+        setOrderDetails(result.data.message[0]);
+      } else if (result.data.success == 101) {
+        setModalMessage(result.data.message);
+        setResultModal(true);
+      } else {
+        setModalMessage(result.data.message);
+        setResultModal(true);
+      }
     } catch (error) {
-      console.log(error.message);
+      setModalMessage(error.message);
+      setResultModal(true);
     }
   };
 
@@ -54,13 +66,18 @@ const OrderDetailsScreen = ({route}) => {
       <View>
         <AppHeaderBackArrow prevScreen={'BottomTabNavigator'} />
       </View>
-      <ScrollView style={{marginBottom:50}}>
+      <ScrollView style={{marginBottom: 50}}>
         <View>
           <OrderIdView order_id={order_id} />
         </View>
 
         {/*sender details view */}
         <View>
+          <ResultModal
+            show={resultModal}
+            function={setResultModal}
+            message={modalMessage}
+          />
           <View style={{marginHorizontal: 25}}>
             {show == true && <Text>Loading data</Text>}
             <Text style={OrderStyles.senderText}>Sender details</Text>
@@ -70,11 +87,11 @@ const OrderDetailsScreen = ({route}) => {
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.titleText}>Name</Text>
                   </View>
-                  <View style={{flex: 1,flexDirection:'row'}}>
+                  <View style={{flex: 1, flexDirection: 'row'}}>
                     <Text style={OrderStyles.valueText}>
                       :- {orderDetails.FN}
                     </Text>
-                    <Text style={[OrderStyles.valueText,{marginLeft:10}]}>
+                    <Text style={[OrderStyles.valueText, {marginLeft: 10}]}>
                       {orderDetails.LN}
                     </Text>
                   </View>
@@ -87,11 +104,11 @@ const OrderDetailsScreen = ({route}) => {
                     <Text style={OrderStyles.valueText}>
                       :- {orderDetails.Pickup_StreetNo},
                     </Text>
-                    <Text style={[OrderStyles.valueText,{marginLeft:15}]}>
+                    <Text style={[OrderStyles.valueText, {marginLeft: 15}]}>
                       {orderDetails.Pickup_Street},
                     </Text>
-                    <Text style={[OrderStyles.valueText,{marginLeft:15}]}>
-                       {orderDetails.Pickup_City}
+                    <Text style={[OrderStyles.valueText, {marginLeft: 15}]}>
+                      {orderDetails.Pickup_City}
                     </Text>
                   </View>
                 </View>
@@ -120,7 +137,9 @@ const OrderDetailsScreen = ({route}) => {
                     <Text style={OrderStyles.titleText}>Contact No</Text>
                   </View>
                   <View style={{flex: 1}}>
-                    <Text style={OrderStyles.valueText}>:- {orderDetails.M}</Text>
+                    <Text style={OrderStyles.valueText}>
+                      :- {orderDetails.M}
+                    </Text>
                   </View>
                 </View>
                 <View style={OrderStyles.insideTextView}>
@@ -128,7 +147,12 @@ const OrderDetailsScreen = ({route}) => {
                     <Text style={OrderStyles.titleText}>Order Place Date</Text>
                   </View>
                   <View style={{flex: 1}}>
-                    <Text style={OrderStyles.valueText}>:- {new Date(orderDetails.orderPlaceDate).toLocaleDateString()}</Text>
+                    <Text style={OrderStyles.valueText}>
+                      :-{' '}
+                      {new Date(
+                        orderDetails.orderPlaceDate,
+                      ).toLocaleDateString()}
+                    </Text>
                   </View>
                 </View>
               </View>
@@ -146,11 +170,11 @@ const OrderDetailsScreen = ({route}) => {
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.titleText}>Name</Text>
                   </View>
-                  <View style={{flex: 1,flexDirection:'row'}}>
+                  <View style={{flex: 1, flexDirection: 'row'}}>
                     <Text style={OrderStyles.valueText}>
                       :- {orderDetails.FirstName}
                     </Text>
-                    <Text style={[OrderStyles.valueText,{marginLeft:10}]}>
+                    <Text style={[OrderStyles.valueText, {marginLeft: 10}]}>
                       {orderDetails.LastName}
                     </Text>
                   </View>
@@ -161,13 +185,13 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flexDirection: 'column', flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                    :- {orderDetails.StreetNo},
+                      :- {orderDetails.StreetNo},
                     </Text>
-                    <Text style={[OrderStyles.valueText,{marginLeft:15}]}>
-                    {orderDetails.Street},
+                    <Text style={[OrderStyles.valueText, {marginLeft: 15}]}>
+                      {orderDetails.Street},
                     </Text>
-                    <Text style={[OrderStyles.valueText,{marginLeft:15}]}>
-                       {orderDetails.City}
+                    <Text style={[OrderStyles.valueText, {marginLeft: 15}]}>
+                      {orderDetails.City}
                     </Text>
                   </View>
                 </View>
@@ -177,7 +201,7 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                    :- {orderDetails.DiliveryDistrict}
+                      :- {orderDetails.DiliveryDistrict}
                     </Text>
                   </View>
                 </View>
@@ -187,7 +211,7 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                    :- {orderDetails.City}
+                      :- {orderDetails.City}
                     </Text>
                   </View>
                 </View>
@@ -197,7 +221,7 @@ const OrderDetailsScreen = ({route}) => {
                   </View>
                   <View style={{flex: 1}}>
                     <Text style={OrderStyles.valueText}>
-                    :- {orderDetails.mobile}
+                      :- {orderDetails.mobile}
                     </Text>
                   </View>
                 </View>
@@ -205,23 +229,23 @@ const OrderDetailsScreen = ({route}) => {
             )}
           </View>
         </View>
-        {screen_type != 'ps'?
-        <View style={OrderStyles.buttonView}>
-        <TouchableOpacity
+        {screen_type != 'ps' ? (
+          <View style={OrderStyles.buttonView}>
+            {/* <TouchableOpacity
           style={OrderStyles.updateStatusView}
           onPress={statusUpdateNavigation}>
           <Text style={OrderStyles.buttonText}>Update Status</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-        <TouchableOpacity
-          style={OrderStyles.priceButtonView}
-          onPress={calculatePriceNavigation}>
-          <Text style={OrderStyles.buttonText}>Calculate Price</Text>
-        </TouchableOpacity>
-      </View>:<Text></Text>
-        
-      }
-        
+            <TouchableOpacity
+              style={OrderStyles.priceButtonView}
+              onPress={calculatePriceNavigation}>
+              <Text style={OrderStyles.buttonText}>Calculate Price</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <Text></Text>
+        )}
       </ScrollView>
     </View>
   );

@@ -61,6 +61,10 @@ const ResetPassword = () => {
         setNewPassword('');
         setConfirmNewPassword('');
       }
+      else{
+        setModalMessage(result.data.message);
+        setResultModal(true);
+      }
     } catch (error) {
       setModalMessage(error.message);
       setResultModal(true);

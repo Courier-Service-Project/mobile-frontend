@@ -53,13 +53,13 @@ const Login = () => {
         'http://10.10.27.131:9000/api/mobile/users/login',
         userdata,
       );
-      const {success, message,token} = result.data;
+      const {success, message, token} = result.data;
       if (success == 200) {
         AsyncStorage.setItem('token', token);
         AsyncStorage.setItem('userName', message[0].FirstName);
         AsyncStorage.setItem('branchLocation', message[0].branchLocation);
         AsyncStorage.setItem('user_id', message[0].BranchUser_id + '');
-        axios.defaults.headers.common['Authorization']=`Bearer ${token}`
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setPassword('');
         setName('');
         {
@@ -68,10 +68,13 @@ const Login = () => {
             : setShowModal(true);
         }
       } else if (success == 101) {
-        setResultModal(true);
         setModalMessage('Invalid Credentials');
+        setResultModal(true);
         setName('');
         setPassword('');
+      } else {
+        setModalMessage(result.data.message);
+        setResultModal(true);
       }
     } catch (error) {
       console.log(error.message);
@@ -103,15 +106,15 @@ const Login = () => {
         <View style={style.bodyMiddle}>
           <Text style={style.bodyMiddleText}>Welcome to XPress!</Text>
         </View>
+        <View>
+          <ResultModal
+            show={resultModal}
+            function={setResultModal}
+            message={modalMessage}
+          />
+        </View>
         <View style={style.bodyBottom}>
           <View style={textInputs.textInputFeildContainer}>
-            <View>
-              <ResultModal
-                show={resultModal}
-                function={setResultModal}
-                message={modalMessage}
-              />
-            </View>
             <NameInput title={'Enter name'} function={setName} value={name} />
 
             <View style={textInputs.textInputWrapper}>

@@ -48,13 +48,18 @@ const ForgotPasswordScreen2 = () => {
 
   //in here this  will delete the otp in async storage.
   const deleteOtp = async () => {
-    const email=await AsyncStorage.getItem('email');
+    const email = await AsyncStorage.getItem('email');
     try {
-      const result=await axios.delete(`http://192.168.43.137:9000/api/mobile/users/deleteOtp/${email}`);
-      if(result.data.success=200){
+      const result = await axios.delete(
+        `http://10.10.27.131:9000/api/mobile/users/deleteOtp/${email}`,
+      );
+      if ((result.data.success = 200)) {
         setModalMessage('Email Verified Successfully');
         setSuccessModalNavigation(true);
-      }else if(result.data.success==101){
+      } else if (result.data.success == 101) {
+        setModalMessage(result.data.message);
+        setResultModal(true);
+      }else{
         setModalMessage(result.data.message);
         setResultModal(true);
       }
@@ -76,13 +81,17 @@ const ForgotPasswordScreen2 = () => {
     setShow(true);
     try {
       const result = await axios.get(
-        `http://192.168.43.137:9000/api/mobile/users/resendOtp/${email}`,
+        `http://10.10.27.131:9000/api/mobile/users/resendOtp/${email}`,
       );
-      if ((result.data.success = 200)) {
+      if ((result.data.success == 200)) {
         setShow(false);
         setModalMessage('Your OTP is sent to ur email');
         setSuccessModal(true);
       } else if (result.data.success == 101) {
+        setShow(false);
+        setModalMessage(result.data.message);
+        setResultModal(true);
+      } else {
         setShow(false);
         setModalMessage(result.data.message);
         setResultModal(true);
@@ -99,14 +108,17 @@ const ForgotPasswordScreen2 = () => {
       let email = await AsyncStorage.getItem('email');
       try {
         const result = await axios.get(
-          `http://192.168.43.137:9000/api/mobile/users/verifyOtp/${email}/${otp}`,
+          `http://10.10.27.131:9000/api/mobile/users/verifyOtp/${email}/${otp}`,
         );
         if (result.data.success == 200) {
-          await deleteOtp()
+          await deleteOtp();
         } else if (result.data.success == 101) {
           setModalMessage(result.data.message);
           setResultModal(true);
           console.log(result.data.message);
+        } else {
+          setModalMessage(result.data.message);
+          setResultModal(true);
         }
       } catch (error) {
         console.log(error);

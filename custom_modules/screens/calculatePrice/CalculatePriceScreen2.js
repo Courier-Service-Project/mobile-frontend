@@ -52,6 +52,10 @@ const CalculatePriceScreen2 = ({route}) => {
         setModalMessage(result.data.message);
         setErrorModal(true);
       }
+      else{
+        setModalMessage(result.data.message);
+        setErrorModal(true);
+      }
     } catch (error) {
       setModalMessage(error.message);
       setErrorModal(true);
