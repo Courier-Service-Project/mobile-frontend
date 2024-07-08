@@ -17,7 +17,6 @@ import {ResultModal} from '../../components/modals/resultModal';
 const CompletedScreen = () => {
   const window = Dimensions.get('window');
   const navigation = useNavigation();
-  const [error, setError] = useState(null);
   const [completedOrders, setCompletedOrders] = useState([]);
   const isFocusedCompletedScreen = useIsFocused();
   const [mergeSort, setMergeSort] = useState([]);
@@ -58,8 +57,8 @@ const CompletedScreen = () => {
         setCompletedOrders(result.data.message);
       } else if (result.data.success == 101) {
         setMergeSort([]);
-        setModalMessage(result.data.message);
-        setResultModal(true);
+        // setModalMessage(result.data.message);
+        // setResultModal(true);
         console.log(result.data.message);
       } else if (result.data.success == 100) {
         setMergeSort([]);

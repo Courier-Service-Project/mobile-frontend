@@ -14,6 +14,7 @@ const PerformanceScreen = () => {
   const [resultModal, setResultModal] = useState(false);
   const [modalMessage, setModalMessage] = useState(null);
   const [isLoading,setIsLoading]=useState(false);
+
   useEffect(() => {
     setIsLoading(true)
     getPerformanceDetails();

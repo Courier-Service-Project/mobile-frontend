@@ -39,10 +39,7 @@ const ResetPassword = () => {
     let userName = await AsyncStorage.getItem('userName');
     //console.log(token);
     const data = {
-
-
       //token,
-
       oldPassword,
       newpassword,
       userName,

@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {AppHeader} from '../components/appHeader';
 import ProfileStyles from '../styles/ProfileScreenStyles';
 import BackendProcessButton from '../components/buttons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-import Octicons from 'react-native-vector-icons/Octicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -20,62 +20,155 @@ import {useIsFocused, useNavigation} from '@react-navigation/native';
 import ImagePicker from 'react-native-image-crop-picker';
 import imagePlaceHolder from '../icons/addPhoto.png';
 import Modal from 'react-native-modal';
-import {ResultModalSuccess} from '../components/modals/resultModal';
+import {
+  ResultModal,
+  ResultModalSuccess,
+  QuestionModal,
+} from '../components/modals/resultModal';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
 const ProfileScreen = () => {
-  const [profile, setProfile] = useState(null);
-  const [profilePic, setProfilePic] = useState(ProfileStyles.addIcon);
+  const [modalMessage, setModalMessage] = useState('');
+  const [showErrorModal, setshowErrorModal] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [deleteConfirmationVisible, setDeleteConfirmationVisible] =
-    useState(false);
+  const [deleteConfirmationVisible, setDeleteSuccessVisible] = useState(false);
   const [updateSuccessVisible, setUpdateSuccessVisible] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const [showQuestionModal, setShowQuestionModal] = useState(false);
+  const [isScreenLoading, setIsScreenLoading] = useState(false);
   const [userData, setUserData] = useState({});
   const navigation = useNavigation();
   const window = useWindowDimensions();
-  const isFocousedProfile=useIsFocused()
+  const isFocousedProfile = useIsFocused();
 
   const navigationLogin = () => {
     navigation.navigate('Login');
   };
 
-  const imagePick = () => {
+  const imagePick = async () => {
     setIsModalVisible(false);
     ImagePicker.openPicker({
       width: 300,
       height: 400,
       cropping: true,
-    }).then(image => {
+    }).then(async image => {
       console.log(image);
-      setProfile(image.path);
-      setProfilePic(ProfileStyles.profileImage); // Set the profile pic styles after selecting image
-      setUpdateSuccessVisible(true);
+      try {
+        await uploadImage(image);
+      } catch (error) {
+        console.log(error);
+      }
     });
   };
 
-  const confirmDelete = () => {
-    deleteProfilePic();
-    setDeleteConfirmationVisible(true);
+  useEffect(()=>{
+    console.log(`userData state has changed ${userData}`);
+    console.log(userData.profileImageUrl)
+    AsyncStorage.removeItem('profileImageUrl');
+    if(userData.profileImageUrl==null){
+      AsyncStorage.setItem('profileImageUrl', 'NIF')
+    }else{
+      AsyncStorage.setItem('profileImageUrl', userData.profileImageUrl)
+    }
+    
+  },[userData])
+
+  const uploadImage = async image => {
+    setIsImageLoading(true);
+    const formData = new FormData();
+    formData.append('myimage', {
+      uri: image.path,
+      name: 'profile.jpg',
+      type: image.mime,
+    });
+
+    try {
+      const user_id = await AsyncStorage.getItem('user_id');
+      const result = await axios.post(
+        `http://10.10.27.131:9000/api/mobile/users/uploadImage/${user_id}`,
+        formData,
+        {
+          headers: {'Content-Type': 'multipart/form-data'},
+        },
+      );
+      if (result.data.success == 200) {
+        await getProfileDetails();
+        setUpdateSuccessVisible(true);
+        setModalMessage(result.data.message);
+      } else if (result.data.success == 101) {
+        console.log(result.data.message);
+        setModalMessage(result.data.message);
+        setshowErrorModal(true);
+      } else {
+        setModalMessage(result.data.message);
+        setshowErrorModal(true);
+      }
+    } catch (error) {
+      console.log(error.message);
+      setModalMessage(error.message);
+      setshowErrorModal(true);
+    } finally {
+      setIsImageLoading(false);
+    }
   };
 
-  const deleteProfilePic = () => {
+  const deleteImage = async () => {
+    setShowQuestionModal(false);
+    setIsImageLoading(true);
+    try {
+      const user_id = await AsyncStorage.getItem('user_id');
+      const result = await axios.delete(
+        `http://10.10.27.131:9000/api/mobile/users/deleteImage/${user_id}`,
+      );
+      if (result.data.success == 200) {
+        console.log(result.data.message);
+        await getProfileDetails();
+        await AsyncStorage.removeItem('profileImageUrl');
+        await AsyncStorage.setItem('profileImageUrl', 'NIF');
+        setUpdateSuccessVisible(true);
+        setModalMessage(result.data.message);
+      } else if (result.data.success == 101) {
+        console.log(result.data.message);
+        setModalMessage(result.data.message);
+        setshowErrorModal(true);
+      } else {
+        setModalMessage(result.data.message);
+        setshowErrorModal(true);
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setIsImageLoading(false);
+    }
+  };
+
+  const handleDelete = () => {
+    setModalMessage('Are you sure you want to delete profile image?');
+    setShowQuestionModal(true);
     setIsModalVisible(false);
-    setProfile(null); // Clear the profile state to delete the profile picture
-    setProfilePic(ProfileStyles.addIcon); // Reset the image style to default
   };
 
-  const toggleModal = () => {
+  const confirmDelete = async () => {
+    setIsModalVisible(false);
+    setShowQuestionModal(false);
+    await deleteImage();
+  };
+
+  const cancelDelete = () => {
+    setShowQuestionModal(false);
+    setIsModalVisible(false);
+  };
+
+  const imageSelectModal = () => {
     setIsModalVisible(!isModalVisible);
   };
 
   useEffect(() => {
-    if(isFocousedProfile){
-      console.log("im inside use effect");
-    getProfileDetails();
+    if (isFocousedProfile) {
+      setIsScreenLoading(true);
+      getProfileDetails();
     }
-    
   }, [isFocousedProfile]);
 
   const getProfileDetails = async () => {
@@ -84,40 +177,44 @@ const ProfileScreen = () => {
       const result = await axios.get(
         `http://10.10.27.131:9000/api/mobile/users/getProfileDetails/${user_id}`,
       );
-      console.log(result.data.message[0]);
-      setUserData(result.data.message[0]);
+      //console.log(result.data.message[0]);
+      await setUserData(result.data.message[0]);
+      setIsScreenLoading(false);
     } catch (error) {
       console.log(error.message);
+      setIsScreenLoading(false);
     }
   };
 
+  const changeNameNavigation = () => {
+    navigation.navigate('ChangeNameScreen');
+  };
 
+  const ChangeEmailNavigation = () => {
+    navigation.navigate('ChangeEmailScreen');
+  };
 
-  const changeNameNavigation=()=>{
-    navigation.navigate('ChangeNameScreen')
-  }
+  const ChangeMobileNavigation = () => {
+    navigation.navigate('ChangeMobileScreen');
+  };
 
-  const ChangeEmailNavigation=()=>{
-    navigation.navigate('ChangeEmailScreen')
-  }
-
-  const ChangeMobileNavigation=()=>{
-    navigation.navigate('ChangeMobileScreen')
-  }
-
-  const ChangeDOBNavigation =()=>{
-    navigation.navigate('ChangeDOBScreen')
-  }
-
-  const ChangeGenderNavigation =()=>{
-    navigation.navigate('ChangeGenderScreen')
-  }
+  const ChangeDOBNavigation = () => {
+    navigation.navigate('ChangeDOBScreen');
+  };
 
   return (
     <View style={{width: window.width, height: window.height}}>
       <View>
         <AppHeader />
       </View>
+
+      <Modal isVisible={isScreenLoading}>
+        <View style={ProfileStyles.activityIndicatorModal}>
+          <ActivityIndicator size={40} />
+          <Text style={{color: '#fff', fontSize: 14}}>Loading ...</Text>
+        </View>
+      </Modal>
+
       <ScrollView style={{marginBottom: 50}}>
         <View style={ProfileStyles.topView}>
           <View>
@@ -125,13 +222,28 @@ const ProfileScreen = () => {
           </View>
           <TouchableOpacity
             style={ProfileStyles.profileimageView}
-            onPress={toggleModal}>
+            onPress={imageSelectModal}>
             <Image
-              style={profilePic}
-              source={profile ? {uri: profile} : imagePlaceHolder}
+              style={
+                userData.profileImageUrl
+                  ? ProfileStyles.profileImage
+                  : ProfileStyles.addIcon
+              }
+              source={
+                userData.profileImageUrl
+                  ? {uri: userData.profileImageUrl}
+                  : imagePlaceHolder
+              }
             />
           </TouchableOpacity>
         </View>
+
+        <Modal isVisible={isImageLoading}>
+          <View style={ProfileStyles.activityIndicatorModal}>
+            <ActivityIndicator size={40} />
+            <Text style={{color: '#fff', fontSize: 14}}>Loading ...</Text>
+          </View>
+        </Modal>
 
         <Modal isVisible={isModalVisible} style={ProfileStyles.modal}>
           <View style={ProfileStyles.modalContent}>
@@ -141,9 +253,9 @@ const ProfileScreen = () => {
               <Text style={ProfileStyles.modalText}>Select From Photos</Text>
             </TouchableOpacity>
 
-            {profile && (
+            {userData.profileImageUrl && (
               <TouchableOpacity
-                onPress={confirmDelete}
+                onPress={handleDelete}
                 style={ProfileStyles.modalItem}>
                 <Text style={[ProfileStyles.modalText, {color: 'red'}]}>
                   Remove Photo
@@ -152,7 +264,7 @@ const ProfileScreen = () => {
             )}
 
             <TouchableOpacity
-              onPress={toggleModal}
+              onPress={imageSelectModal}
               style={ProfileStyles.modalItem}>
               <Text style={ProfileStyles.modalText}>Cancel</Text>
             </TouchableOpacity>
@@ -161,14 +273,27 @@ const ProfileScreen = () => {
 
         <ResultModalSuccess
           show={updateSuccessVisible}
-          message="Successfully updated the profile picture!"
+          message={modalMessage}
           function={setUpdateSuccessVisible}
         />
 
         <ResultModalSuccess
           show={deleteConfirmationVisible}
-          message="Successfully deleted the profile picture!"
-          function={setDeleteConfirmationVisible}
+          message={modalMessage}
+          function={setDeleteSuccessVisible}
+        />
+
+        <ResultModal
+          show={showErrorModal}
+          message={modalMessage}
+          function={setshowErrorModal}
+        />
+
+        <QuestionModal
+          show={showQuestionModal}
+          message={modalMessage}
+          function={confirmDelete}
+          cancelFunction={cancelDelete}
         />
 
         <View style={ProfileStyles.bottomView}>
@@ -189,7 +314,10 @@ const ProfileScreen = () => {
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={()=>{changeNameNavigation()}}>
+              <TouchableOpacity
+                onPress={() => {
+                  changeNameNavigation();
+                }}>
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}
@@ -213,7 +341,10 @@ const ProfileScreen = () => {
                   <Text style={ProfileStyles.valueText}>{userData.Email}</Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={()=>{ChangeEmailNavigation()}}>
+              <TouchableOpacity
+                onPress={() => {
+                  ChangeEmailNavigation();
+                }}>
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}
@@ -241,7 +372,10 @@ const ProfileScreen = () => {
                   <Text style={ProfileStyles.valueText}>{userData.Mobile}</Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={()=>{ChangeMobileNavigation()}}>
+              <TouchableOpacity
+                onPress={() => {
+                  ChangeMobileNavigation();
+                }}>
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}
@@ -267,35 +401,18 @@ const ProfileScreen = () => {
                 <Text style={ProfileStyles.titleText}>Birthday</Text>
                 <View>
                   <Text style={ProfileStyles.valueText}>
-                    {`${new Date(userData.DOB).getFullYear().toString()}-${(new Date(userData.DOB).getMonth()+1).toString()}-${new Date(userData.DOB).getDate().toString()}`}
+                    {`${new Date(userData.DOB).getFullYear().toString()}-${(
+                      new Date(userData.DOB).getMonth() + 1
+                    ).toString()}-${new Date(userData.DOB)
+                      .getDate()
+                      .toString()}`}
                   </Text>
                 </View>
               </View>
-              <TouchableOpacity onPress={()=>{ChangeDOBNavigation()}} >
-                <SimpleLineIcons
-                  name="arrow-right"
-                  color={'#044B55'}
-                  size={16}
-                  marginRight={15}
-                />
-              </TouchableOpacity>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={ProfileStyles.itemView}>
-            <View>
-              <View style={ProfileStyles.infoiconView}>
-                <Octicons name="people" color={'#044B55'} size={25} />
-              </View>
-            </View>
-            <View style={ProfileStyles.insidetextView}>
-              <View>
-                <Text style={ProfileStyles.titleText}>Gender</Text>
-                <View>
-                  <Text style={ProfileStyles.valueText}>{userData.Gender}</Text>
-                </View>
-              </View>
-              <TouchableOpacity onPress={ChangeGenderNavigation}>
+              <TouchableOpacity
+                onPress={() => {
+                  ChangeDOBNavigation();
+                }}>
                 <SimpleLineIcons
                   name="arrow-right"
                   color={'#044B55'}

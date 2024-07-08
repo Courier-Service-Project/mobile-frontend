@@ -4,14 +4,17 @@ import AppHeaderBackArrow from '../../components/appHeaderBackArrow';
 import BackendProcessButton from '../../components/buttons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ResultModalSuccessNavigation } from '../../components/modals/resultModal';
+import { ResultModalSuccessNavigation,ResultModal } from '../../components/modals/resultModal';
 import { useNavigation } from '@react-navigation/native';
 import validateEmail from '../../modules/Validations/emailValidation';
 
 const ChangeEmailScreen = () => {
   const [email, setEmail] = useState('');
+  const [modalMessage,setModalMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal,setShowErrorModal] = useState(false);
+
   const navigation = useNavigation();
 
   
@@ -34,9 +37,19 @@ const ChangeEmailScreen = () => {
           `http://10.10.27.131:9000/api/mobile/users/updateEmail/${user_id}`,
           email1
         );
-        console.log(response.data.message);
-        setErrorMessage(''); // Clear the error message if the request is successful
-        setShowSuccessModal(true);
+        if(response.data.success==200){
+          console.log(response.data.message);
+          setModalMessage(response.data.message);
+          setShowSuccessModal(true);
+        }
+        else if(response.data.success==101){
+          setShowErrorModal(true);
+          setModalMessage(response.data.message);
+        }
+        else{
+          setShowErrorModal(true);
+          setModalMessage(response.data.message);
+        }
       } catch (error) {
         console.log(error);
         setErrorMessage('An error occurred while updating the email.');
@@ -52,6 +65,19 @@ const ChangeEmailScreen = () => {
       <View>
         <AppHeaderBackArrow prevScreen={'BottomTabNavigator'} />
       </View>
+
+      <ResultModalSuccessNavigation
+        show={showSuccessModal}
+        message={modalMessage}
+        function={navigationProfile}
+      />
+
+      <ResultModal
+          show={showErrorModal}
+          message={modalMessage}
+          function={setShowErrorModal}
+        />
+
       <View>
         <View style={styles.profileView}>
           <Text style={styles.profileText}>Profile</Text>
@@ -74,11 +100,6 @@ const ChangeEmailScreen = () => {
       <View style={styles.buttonView}>
         <BackendProcessButton title={'Save'} function={handleSave} />
       </View>
-      <ResultModalSuccessNavigation
-        show={showSuccessModal}
-        message={'Email Updated Successfully'}
-        function={navigationProfile}
-      />
     </View>
   );
 };

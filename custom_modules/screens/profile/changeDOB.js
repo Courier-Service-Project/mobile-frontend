@@ -5,12 +5,24 @@ import AppHeaderBackArrow from '../../components/appHeaderBackArrow';
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-
+import {useNavigation} from '@react-navigation/native';
+import {
+  ResultModalSuccessNavigation,
+  ResultModal,
+} from '../../components/modals/resultModal';
 
 const ChangeDOBScreen = () => {
+  const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+
+  const navigationProfile = () => {
+    navigation.navigate('BottomTabNavigator', {screen: 'ProfileScreen'});
+  };
 
   const onChange = async (event, selectedDate) => {
     const user_id = await AsyncStorage.getItem('user_id');
@@ -19,14 +31,24 @@ const ChangeDOBScreen = () => {
     setDate(currentDate);
 
     try {
-      const dob={
-        currentDate  
-      }
-      const result = await axios.patch(
-        `http://10.10.27.131:9000/api/mobile/users/updateDob/${user_id}`,dob
+      const dob = {
+        currentDate,
+      };
+      const response = await axios.patch(
+        `http://10.10.27.131:9000/api/mobile/users/updateDob/${user_id}`,
+        dob,
       );
-      console.log(result.data.message);
-      setErrorMessage('');
+      if (response.data.success == 200) {
+        console.log(response.data.message);
+        setModalMessage(response.data.message);
+        setShowSuccessModal(true);
+      } else if (response.data.success == 101) {
+        setShowErrorModal(true);
+        setModalMessage(response.data.message);
+      } else {
+        setShowErrorModal(true);
+        setModalMessage(response.data.message);
+      }
     } catch (error) {
       setErrorMessage('An error occurred while updating the birthday.');
       console.log(error.message);
@@ -42,35 +64,48 @@ const ChangeDOBScreen = () => {
       <View>
         <AppHeaderBackArrow prevScreen={'BottomTabNavigator'} />
       </View>
-      <View style={styles.profileView}>
-        <Text style={styles.profileText}>Profile</Text>
-      </View>
-      <View style={styles.container}>
-        <View style={styles.content}>
-          <View style={{flexDirection: 'row', margin: 20}}>
-            <Text style={styles.titleText}>Select your birthday</Text>
-            <TouchableOpacity onPress={showDatepicker}>
-              <FontAwesome6
-                name="calendar-days"
-                color={'#128F87'}
-                size={26}
-                marginRight={15}
+
+      <ResultModalSuccessNavigation
+        show={showSuccessModal}
+        message={modalMessage}
+        function={navigationProfile}
+      />
+      <ResultModal
+        show={showErrorModal}
+        message={modalMessage}
+        function={setShowErrorModal}
+      />
+      <View>
+        <View style={styles.profileView}>
+          <Text style={styles.profileText}>Profile</Text>
+        </View>
+        <View style={styles.container}>
+          <View style={styles.content}>
+            <View style={{flexDirection: 'row', margin: 20}}>
+              <Text style={styles.titleText}>Select your birthday</Text>
+              <TouchableOpacity onPress={showDatepicker}>
+                <FontAwesome6
+                  name="calendar-days"
+                  color={'#128F87'}
+                  size={26}
+                  marginRight={15}
+                />
+              </TouchableOpacity>
+            </View>
+            {show && (
+              <DateTimePicker
+                value={date}
+                mode="date"
+                display="default"
+                onChange={onChange}
+                onTouchCancel={() => setShow(false)}
               />
-            </TouchableOpacity>
-          </View>
-          {show && (
-            <DateTimePicker
-              value={date}
-              mode="date"
-              display="default"
-              onChange={onChange}
-              onTouchCancel={() => setShow(false)}
-            />
-          )}
-          <View>
-            {errorMessage ? (
-              <Text style={styles.errorText}>{errorMessage}</Text>
-            ) : null}
+            )}
+            <View>
+              {errorMessage ? (
+                <Text style={styles.errorText}>{errorMessage}</Text>
+              ) : null}
+            </View>
           </View>
         </View>
       </View>

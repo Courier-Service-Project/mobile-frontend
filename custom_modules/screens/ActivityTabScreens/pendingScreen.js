@@ -68,20 +68,10 @@ const PendingScreen = () => {
       );
       setLastDiliveryProvince(items.DiliveryProvince);
       updateStatusRequest(items);
-      //setModalMessage('Order added successfully');
-      //setSuccessModal(true);
-      //sendRequest();
     } else if (items.DiliveryProvince == lastDiliveryProvince) {
       updateStatusRequest(items);
-      //setModalMessage('Order added successfully');
-      //setSuccessModal(true);
-      //sendRequest();
-    } else if (items.DiliveryProvince == 'CSP') {
-      setModalMessage(
-        'Cannot select orders.Some Orders Are Ongoing Or Verifying',
-      );
-      setResultModal(true);
-    } else {
+    } 
+    else {
       setModalMessage('Orders must be in same Province');
       setResultModal(true);
     }
@@ -164,8 +154,8 @@ const PendingScreen = () => {
         height: window.height,
       }}>
       {isLoading ? (
-        <View>
-          <ActivityIndicator size="large" />
+        <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>
+          <ActivityIndicator size={40} />
         </View>
       ) : (
         <ScrollView>
