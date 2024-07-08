@@ -45,7 +45,7 @@ const CalculatePriceScreen2 = ({route}) => {
         setWeightCost(result.data.message[0].Weight_Cost);
         setTotalCost(result.data.message[0].Total_Cost);
         setModalMessage(
-          'Order will be displayed on ongoing list after verified!',
+          'Order Added to Ongoing List!',
         );
       }
       else if(result.data.success == 101){

@@ -28,7 +28,7 @@ const CalculatePriceScreen1 = ({route}) => {
   const [errorModal, setErrorModal] = useState(false);
   const [navigationModal, setNavigationModal] = useState(false);
   const [modalMessage, setModalMessage] = useState();
-  const [isLoading,setIsLoading]=useState(false);
+  const [isLoading,setIsLoading]=useState(true);
 
   const {order_id} = route.params;
 
@@ -54,6 +54,8 @@ const CalculatePriceScreen1 = ({route}) => {
       
     } catch (error) {
       console.log(error.message);
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -134,9 +136,10 @@ const CalculatePriceScreen1 = ({route}) => {
           function={setErrorModal}
         />
       </View>
-      {isLoading?(<View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-        <ActivityIndicator size={70} />
-        <Text style={{color:"#0A4851",fontSize:20}}>Loading...</Text>
+      {isLoading?(
+        <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+        <ActivityIndicator size={40} />
+        <Text style={{color:"#0A4851",fontSize:14}}>Loading...</Text>
       </View>):(
       <ScrollView>
         <View>
@@ -202,7 +205,8 @@ const CalculatePriceScreen1 = ({route}) => {
             </View>
           </View>
         </View>
-      </ScrollView>)}
+      </ScrollView>
+    )}
     </View>
   );
 };

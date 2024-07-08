@@ -19,7 +19,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const OngoingOrderScreen = () => {
   const [ongoingOrders, setOngoingOrders] = useState([]);
-  const [error, setError] = useState(null);
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setshowErrorModal] = useState(false);
@@ -30,7 +29,7 @@ const OngoingOrderScreen = () => {
   const navigation = useNavigation();
   const [mergeSort, setMergeSort] = useState([]);
   const [userId, setUserId] = useState(null);
-  const window = Dimensions.get('window');
+  //const window = useWindowDimensions();
 
   useEffect(() => {
     if (isFocusedOnGoingScreen) {
@@ -40,10 +39,6 @@ const OngoingOrderScreen = () => {
 
   useEffect(() => {
     if (ongoingOrders.length > 0) {
-      // if (!Array.isArray(ongoingOrders)) {
-      //   console.error('ongoingOrders is not an array:', ongoingOrders);
-      //   return;
-      // }
       sortingList();
     }
   }, [ongoingOrders]);
@@ -73,13 +68,11 @@ const OngoingOrderScreen = () => {
       } else {
         setMergeSort([]);
         setModalMessage(result.data.message);
-        //setModalMessage(result.data.message);
         setshowErrorModal(true);
       }
     } catch (error) {
       console.log(error.message);
       setModalMessage(result.data.message);
-      //setModalMessage(result.data.message);
       setshowErrorModal(true);
     }
   };
@@ -100,6 +93,7 @@ const OngoingOrderScreen = () => {
 
   const handleConfirm = async order_id => {
     await updateOnDiliveryState(order_id);
+    //setShowQuestionModal(false);
   };
   const cancelConfirm = () => {
     setShowQuestionModal(false);
@@ -107,6 +101,7 @@ const OngoingOrderScreen = () => {
 
   const updateOnDiliveryState = async order_id => {
     setIsLoading(true);
+    setShowQuestionModal(false);
     const userId = await AsyncStorage.getItem('user_id');
     try {
       const result = await axios.patch(
@@ -114,18 +109,15 @@ const OngoingOrderScreen = () => {
       );
       if (result.data.success == 200) {
         console.log(result.data);
-        setShowQuestionModal(false);
         setShowSuccessModal(true);
         getOnDeliveryOrders();
         setIsLoading(false);
       } else if (result.data.success == 101) {
         setModalMessage(result.data.message);
-        //setModalMessage(result.data.message);
         setshowErrorModal(true);
         setIsLoading(false);
       } else {
         setModalMessage(result.data.message);
-        //setModalMessage(result.data.message);
         setshowErrorModal(true);
         setIsLoading(false);
       }
@@ -166,8 +158,10 @@ const OngoingOrderScreen = () => {
         />
       </View>
 
-      {isLoading ? ( // Show activity indicator when loading
-        <ActivityIndicator size="large" />
+      {isLoading ? (
+        <View style={{flex:1,alignItems:'center',justifyContent:'center'}}>   
+          <ActivityIndicator size={40} />
+          </View>
       ) : mergeSort.length ? (
         <FlatList
           data={mergeSort}

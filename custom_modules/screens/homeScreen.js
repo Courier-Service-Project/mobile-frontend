@@ -18,7 +18,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useIsFocused, useNavigation} from '@react-navigation/native';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import {ResultModal} from '../components/modals/resultModal';
-
+import Modal from 'react-native-modal';
 
 const HomeScreen = () => {
   const window = useWindowDimensions();
@@ -27,17 +27,21 @@ const HomeScreen = () => {
   const [orderStatusCount, setOrderStatusCount] = useState([]);
   const [modalMessage, setModalMessage] = useState();
   const [resultModal, setResultModal] = useState(false);
-  const [isLoading,setIsLoading]=useState(false);
-  const [userName,setUserName]=useState();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [userName, setUserName] = useState();
+  const [profileUrl, setProfileUrl] = useState('NIF');
+
   useEffect(() => {
     if (isFocused) {
       setIsLoading(true);
-      getOrderStateCounts();
+      getOrderStateCountsAndProfileImage();
     }
   }, [isFocused]);
 
-  const getOrderStateCounts = async () => {
-    setUserName(await AsyncStorage.getItem('userName'))
+  const getOrderStateCountsAndProfileImage = async () => {
+    setUserName(await AsyncStorage.getItem('userName'));
+    setProfileUrl(await AsyncStorage.getItem('profileImageUrl'));
     const user_id = await AsyncStorage.getItem('user_id');
     const branchLocation = await AsyncStorage.getItem('branchLocation');
     try {
@@ -73,12 +77,23 @@ const HomeScreen = () => {
 
   return (
     <View style={{width: window.width, height: window.height}}>
+
+      <Modal isVisible={isLoading}>
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size={40} />
+          <Text style={{color: '#fff', fontSize: 14}}>Loading ...</Text>
+        </View>
+      </Modal>
+
       <View style={HomeStyles.topView}>
         <View>
           <Text style={HomeStyles.welcomeText}>Welcome To XPress!</Text>
           <Text style={HomeStyles.helloText}>{userName}</Text>
           <View style={HomeStyles.imageView}>
-            <Image source={HomeImage} style={HomeStyles.homeImage} />
+            <Image
+              source={profileUrl != 'NIF' ? {uri: profileUrl} : HomeImage}
+              style={HomeStyles.homeImage}
+            />
           </View>
         </View>
       </View>
@@ -100,70 +115,76 @@ const HomeScreen = () => {
         />
       </View>
 
-      {isLoading ?(
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <ActivityIndicator size={40} />
-      <Text style={{color: '#0A4851', fontSize: 14}}>Loading...</Text>
-    </View>):(
-      <ScrollView>
-        {orderStatusCount.length > 0 && (
-          <View style={HomeStyles.bottomView}>
-            <ScrollView style={{marginBottom: 50}}>
-              {/* set bottom card view */}
-              <View
-                style={{
-                  flex: 1,
-                  flexDirection: 'row',
-                  flexWrap: 'wrap',
-                  justifyContent: 'space-around',
-                  marginTop: 30,
-                }}>
-                <TouchableOpacity style={HomeStyles.card}>
-                  <View>
-                    <MaterialIcons
-                      name="pending-actions"
+      {/* {isLoading ? (
+        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+          <ActivityIndicator size={40} />
+          <Text style={{color: '#0A4851', fontSize: 14}}>Loading...</Text>
+        </View>
+      ) : ( */}
+        <ScrollView>
+          {orderStatusCount.length > 0 && (
+            <View style={HomeStyles.bottomView}>
+              <ScrollView style={{marginBottom: 50}}>
+                {/* set bottom card view */}
+                <View
+                  style={{
+                    flex: 1,
+                    flexDirection: 'row',
+                    flexWrap: 'wrap',
+                    justifyContent: 'space-around',
+                    marginTop: 30,
+                  }}>
+                  <TouchableOpacity style={HomeStyles.card}>
+                    <View>
+                      <MaterialIcons
+                        name="pending-actions"
+                        color={'#20DED2'}
+                        size={40}
+                      />
+                    </View>
+                    <Text style={HomeStyles.cardText}>Pending Orders</Text>
+                    <Text style={HomeStyles.cardText}>
+                      {orderStatusCount[0][0].pendingCount}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={HomeStyles.card}>
+                    <AntDesign name="profile" color={'#20DED2'} size={40} />
+                    <Text style={HomeStyles.cardText}>Selected Orders</Text>
+                    <Text style={HomeStyles.cardText}>
+                      {orderStatusCount[1][0].selectedCount}
+                    </Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={HomeStyles.card}>
+                    <MaterialCommunityIcons
+                      name="truck-check-outline"
                       color={'#20DED2'}
                       size={40}
                     />
-                  </View>
-                  <Text style={HomeStyles.cardText}>Pending Orders</Text>
-                  <Text style={HomeStyles.cardText}>
-                    {orderStatusCount[0][0].pendingCount}
-                  </Text>
-                </TouchableOpacity>
+                    <Text style={HomeStyles.cardText}>Ongoing Orders</Text>
+                    <Text style={HomeStyles.cardText}>
+                      {orderStatusCount[2][0].onGoingCount}
+                    </Text>
+                  </TouchableOpacity>
 
-                <TouchableOpacity style={HomeStyles.card}>
-                  <AntDesign name="profile" color={'#20DED2'} size={40} />
-                  <Text style={HomeStyles.cardText}>Selected Orders</Text>
-                  <Text style={HomeStyles.cardText}>
-                    {orderStatusCount[1][0].selectedCount}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={HomeStyles.card}>
-                  <MaterialCommunityIcons
-                    name="truck-check-outline"
-                    color={'#20DED2'}
-                    size={40}
-                  />
-                  <Text style={HomeStyles.cardText}>Ongoing Orders</Text>
-                  <Text style={HomeStyles.cardText}>
-                    {orderStatusCount[2][0].onGoingCount}
-                  </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={HomeStyles.card}>
-                  <MaterialIcons name="done-all" color={'#20DED2'} size={40} />
-                  <Text style={HomeStyles.cardText}>Completed Orders</Text>
-                  <Text style={HomeStyles.cardText}>
-                    {orderStatusCount[3][0].completedCount}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </ScrollView>
-          </View>
-        )}
-      </ScrollView>)}
+                  <TouchableOpacity style={HomeStyles.card}>
+                    <MaterialIcons
+                      name="done-all"
+                      color={'#20DED2'}
+                      size={40}
+                    />
+                    <Text style={HomeStyles.cardText}>Completed Orders</Text>
+                    <Text style={HomeStyles.cardText}>
+                      {orderStatusCount[3][0].completedCount}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              </ScrollView>
+            </View>
+          )}
+        </ScrollView>
+      
     </View>
   );
 };

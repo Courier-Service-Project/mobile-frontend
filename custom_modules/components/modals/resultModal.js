@@ -106,7 +106,6 @@ const QuestionModal = props => {
           <View style={{flexDirection:'row',justifyContent:'space-between'}}>
             <TouchableOpacity
               style={[style.button,{width:120,marginRight:15}]}
-              //onPress={()=>{console.log('im clicked!!!')}}
               onPress={()=>{props.function(props.order_id)}}
               >
               <Text style={style.textButton}>Yes</Text>

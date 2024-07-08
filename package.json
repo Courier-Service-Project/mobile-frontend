@@ -10,7 +10,9 @@
     "test": "jest"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.609.0",
     "@react-native-async-storage/async-storage": "^1.21.0",
+    "@react-native-community/blur": "^4.4.0",
     "@react-native-community/datetimepicker": "^8.1.1",
     "@react-navigation/bottom-tabs": "^6.5.16",
     "@react-navigation/material-top-tabs": "^6.6.10",

@@ -5,7 +5,7 @@ import BackendProcessButton from '../../components/buttons';
 import validateName from '../../modules/Validations/nameValidation';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { ResultModalSuccessNavigation } from '../../components/modals/resultModal';
+import { ResultModalSuccessNavigation,ResultModal } from '../../components/modals/resultModal';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -13,12 +13,15 @@ const ChangeNameScreen = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [modalMessage,setModalMessage] = useState('');
   const [showSuccessModal,setShowSuccessModal]=useState(false);
+  const [showErrorModal,setShowErrorModal] = useState(false);
   const navigation = useNavigation();
 
   const navigationProfile = () => {
     navigation.navigate('BottomTabNavigator',{screen:'ProfileScreen'});
   };
+
   const handleSave = async () => {
     const user_id = await AsyncStorage.getItem('user_id');
     const validationMessage = validateName(firstName, lastName);
@@ -30,18 +33,24 @@ const ChangeNameScreen = () => {
           `http://10.10.27.131:9000/api/mobile/users/changeName/${user_id}`,
           name,
         );
-        console.log(response.data.message);
-        setErrorMessage(''); // Clear the error message if the request is successful
-        //Alert.alert('Success', 'Name updated successfully');
-        setShowSuccessModal(true);
-
-
+        if(response.data.success==200){
+          console.log(response.data.message);
+          setShowSuccessModal(true);
+          setModalMessage(response.data.message);
+        }
+        else if(response.data.success==101){
+          setShowErrorModal(true);
+          setModalMessage(response.data.message);
+        }
+        else{
+          setShowErrorModal(true);
+          setModalMessage(response.data.message);
+        }
       } catch (error) {
         console.log(error);
         setErrorMessage('An error occurred while updating the name.');
       }
     } else {
-      
       setErrorMessage(validationMessage);
     }
   };
@@ -51,6 +60,19 @@ const ChangeNameScreen = () => {
       <View>
         <AppHeaderBackArrow prevScreen={'BottomTabNavigator'} />
       </View>
+
+      <ResultModalSuccessNavigation
+        show={showSuccessModal}
+        message={modalMessage}
+        function={navigationProfile}
+      />
+
+      <ResultModal
+          show={showErrorModal}
+          message={modalMessage}
+          function={setShowErrorModal}
+        />
+
       <View>
         <View style={styles.profileView}>
           <Text style={styles.profileText}>Profile</Text>
@@ -95,12 +117,6 @@ const ChangeNameScreen = () => {
       <View style={styles.buttonView}>
         <BackendProcessButton title={'Save'} function={handleSave} />
       </View>
-
-      <ResultModalSuccessNavigation
-        show={showSuccessModal}
-        message={'Name Updated Successfully'}
-        function={navigationProfile}
-      />
     </View>
   );
 };

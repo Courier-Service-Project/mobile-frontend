@@ -41,6 +41,13 @@ const ProfileStyles = StyleSheet.create({
     height: 70,
     borderRadius: 35,
   },
+  activityIndicatorModal: {
+    padding: 30,
+    width: '90%',
+    height:'50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   modal: {
     justifyContent: 'flex-end',
     margin: 0,

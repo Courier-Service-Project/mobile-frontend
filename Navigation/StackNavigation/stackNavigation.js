@@ -15,7 +15,6 @@ import ChangeNameScreen from '../../custom_modules/screens/profile/changeNameScr
 import ChangeEmailScreen from '../../custom_modules/screens/profile/changeEmailScreen';
 import ChangeMobileScreen from '../../custom_modules/screens/profile/changeMobileScreen';
 import ChangeDOBScreen from '../../custom_modules/screens/profile/changeDOB';
-import ChangeGenderScreen from '../../custom_modules/screens/profile/changeGenderScreen';
 import PerformanceScreen from '../../custom_modules/screens/performanceScreen';
 
 const stack = createNativeStackNavigator();
@@ -75,10 +74,6 @@ const StackNavigation = () => {
         component={ChangeDOBScreen}></stack.Screen>
 
       <stack.Screen
-        name="ChangeGenderScreen"
-        component={ChangeGenderScreen}></stack.Screen>
-
-<stack.Screen
         name="PerformanceScreen"
         component={PerformanceScreen}></stack.Screen>
     </stack.Navigator>

@@ -55,10 +55,15 @@ const Login = () => {
       );
       const {success, message, token} = result.data;
       if (success == 200) {
-        AsyncStorage.setItem('token', token);
-        AsyncStorage.setItem('userName', message[0].FirstName);
-        AsyncStorage.setItem('branchLocation', message[0].branchLocation);
-        AsyncStorage.setItem('user_id', message[0].BranchUser_id + '');
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('userName', message[0].FirstName);
+        await AsyncStorage.setItem('branchLocation', message[0].branchLocation);
+        await AsyncStorage.setItem('user_id', message[0].BranchUser_id + '');
+        if(message[0].profileImageUrl==null){
+          await AsyncStorage.setItem('profileImageUrl','NIF');
+        }else{
+          await AsyncStorage.setItem('profileImageUrl', message[0].profileImageUrl + '');
+        }      
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
         setPassword('');
         setName('');
